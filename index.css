@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-army-green: #4B5320;
+  --color-coter-blue: #0054A6;
+  --color-coter-red: #ED1C24;
+  --color-coter-gold: #FFD200;
+  
+  /* Theme mapping to tailwind */
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+  --color-primary-theme: var(--primary-theme);
+  --color-secondary-theme: var(--secondary-theme);
+  --color-accent-theme: var(--accent-theme);
+  --color-primary-contrast: var(--primary-contrast);
+  --color-info-accent: var(--info-accent);
+}
+
+:root {
+  /* Default (Light) Theme */
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --primary-theme: #1a2e1a;
+  --secondary-theme: #10b981;
+  --accent-theme: #FFD200;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border: #e2e8f0;
+  --primary-contrast: #ffffff;
+  --info-accent: #1e40af; /* Blue 800 */
+  --header-gradient: linear-gradient(135deg, #1a2e1a 0%, #2d3e2d 100%);
+}
+
+[data-theme='dark'] {
+  --bg: #0F172A;
+  --surface: #111827;
+  --primary-theme: #3B82F6;
+  --secondary-theme: #1E40AF;
+  --accent-theme: #60a5fa;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --border: #1F2937;
+  --primary-contrast: #ffffff;
+  --info-accent: #3b82f6; /* Blue 500 */
+  --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+}
+
+[data-theme='coter'] {
+  /* OFICIAL MILITARY PALETTE */
+  --bg: #1D3518; /* Verde Escuro Base */
+  --surface: #243F1D; /* Fundo Secundário Cards */
+  --primary-theme: #C09C46; /* Dourado Médio */
+  --secondary-theme: #E3C160; /* Dourado Claro */
+  --accent-theme: #686E30; /* Verde Oliva */
+  --text-primary: #F5F5F5;
+  --text-secondary: #CFCFCF;
+  --border: #485A2E; /* Verde Militar Transição */
+  --primary-contrast: #1D3518; /* Texto escuro sobre dourado */
+  --info-accent: #C09C46; /* Dourado Médio para substituir Blue em COTER */
+  --header-gradient: linear-gradient(135deg, #132410 0%, #1D3518 100%);
+}
+
+/* Typography Sharpness: Force Bold for Blue fonts in Dark Mode */
+[data-theme='dark'] .text-info-accent,
+[data-theme='dark'] .text-primary-theme,
+[data-theme='dark'] .text-secondary-theme {
+  font-weight: 800 !important;
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body {
+  @apply bg-background text-text-primary font-sans;
+}
+
+.military-gradient {
+  background: var(--header-gradient);
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Paragraph spacing for generated content */
+.markdown-body p {
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+.markdown-body p:last-child {
+  margin-bottom: 0;
+}
