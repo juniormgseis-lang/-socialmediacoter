@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { Download, FileDown, Copy, Check } from 'lucide-react';
+import { Icons } from '../constants';
 
 interface DeliverableCardProps {
   title: string;
@@ -11,9 +12,10 @@ interface DeliverableCardProps {
   content: string;
   badge?: string;
   imageUrl?: string;
+  visualSuggestion?: string;
 }
 
-export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, content, badge, imageUrl }) => {
+export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, content, badge, imageUrl, visualSuggestion }) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleDownloadImage = () => {
@@ -57,6 +59,23 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, c
     
     const lines = doc.splitTextToSize(cleanText, contentWidth);
     doc.text(lines, margin, 55);
+
+    let nextY = 55 + (lines.length * 7);
+
+    if (!imageUrl && visualSuggestion) {
+      nextY += 10;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(16, 185, 129); // emerald-500
+      doc.text("SUGESTÃO DE IDENTIDADE VISUAL:", margin, nextY);
+      
+      nextY += 7;
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(9);
+      doc.setTextColor(100, 116, 139); // slate-500
+      const suggestionLines = doc.splitTextToSize(visualSuggestion, contentWidth);
+      doc.text(suggestionLines, margin, nextY);
+    }
 
     // Rodapé de Autenticidade
     const pageCount = (doc as any).internal.getNumberOfPages();
@@ -125,6 +144,19 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, c
           >
             <Download className="w-5 h-5" />
           </button>
+        </div>
+      )}
+
+      {!imageUrl && visualSuggestion && (
+        <div className="bg-secondary-theme/5 border-b border-border p-6 flex items-start gap-4">
+          <div className="p-3 bg-secondary-theme text-white rounded-xl shadow-lg shrink-0">
+            <Icons.Camera className="w-5 h-5" />
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] font-black text-secondary-theme uppercase tracking-widest">Sugestão de Identidade Visual</h4>
+            <p className="text-xs text-text-primary font-bold italic leading-relaxed">"{visualSuggestion}"</p>
+            <p className="text-[10px] text-text-secondary font-medium uppercase mt-2 opacity-60 italic">* Use esta descrição para orientar a produção visual manual ou via IA externa.</p>
+          </div>
         </div>
       )}
 

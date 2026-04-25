@@ -73,6 +73,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
           ))}
         </div>
       </div>
+
       <div className="space-y-4">
         <label className="block text-[12px] font-black text-text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
           <Palette className="w-4 h-4 text-secondary-theme" /> Identidade Visual

@@ -155,6 +155,7 @@ export interface SocialMediaContent {
   sourceLinks?: { title: string; uri: string }[];
   conflictWarnings?: string;
   imageUrl?: string;
+  visualIdentitySuggestion?: string;
 }
 
 export interface ReferenceImage {
@@ -165,7 +166,6 @@ export interface ReferenceImage {
 }
 
 export enum AIProvider {
-  GEMINI = 'Google Gemini (Strategic)',
   GEMINI_FLASH = 'Gemini 1.5 Flash (Foco em Velocidade)',
 }
 

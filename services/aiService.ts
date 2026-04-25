@@ -2,8 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider } from "../types";
 
-const TEXT_MODEL_STRATEGIC = 'gemini-3.1-pro-preview';
-const TEXT_MODEL_FLASH = 'gemini-flash-latest'; 
+const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
 // Tenta obter a chave de múltiplas fontes para garantir o funcionamento
@@ -18,11 +17,9 @@ const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY || '' });
 /**
  * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
  */
-async function callGeminiWithFallback(model: string, contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [model];
-  if (model !== TEXT_MODEL_FLASH) modelsToTry.push(TEXT_MODEL_FLASH);
-  if (!modelsToTry.includes('gemini-3-flash-preview')) modelsToTry.push('gemini-3-flash-preview');
-
+async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
+  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-1.5-flash', 'gemini-3-flash-preview'];
+  
   let lastError: any = null;
 
   for (const modelToTry of modelsToTry) {
@@ -45,9 +42,10 @@ async function callGeminiWithFallback(model: string, contents: any, systemInstru
               riskAnalysis: { type: Type.STRING },
               impactMetrics: { type: Type.STRING },
               sources: { type: Type.ARRAY, items: { type: Type.STRING } },
-              conflictWarnings: { type: Type.STRING }
+              conflictWarnings: { type: Type.STRING },
+              visualIdentitySuggestion: { type: Type.STRING }
             },
-            required: ["instagram", "whatsapp", "article", "articleTitle", "riskAnalysis", "impactMetrics", "sources", "conflictWarnings"]
+            required: ["instagram", "whatsapp", "article", "articleTitle", "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"]
           }
         }
       });
@@ -131,12 +129,16 @@ export async function generateOperationalContent(params: GenerationParams): Prom
         "riskAnalysis": "texto",
         "impactMetrics": "texto",
         "sources": ["fonte1", "fonte2"],
-        "conflictWarnings": "texto ou vazio"
+        "conflictWarnings": "texto ou vazio",
+        "visualIdentitySuggestion": "descrição detalhada da imagem sugerida para este conteúdo"
       }
 
       REQUISITOS GERAIS PARA TODOS OS TEXTOS:
       1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n) para garantir o espaçamento visual.
       2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
+
+      SUGESTÃO DE IDENTIDADE VISUAL:
+      Sempre apresente uma sugestão detalhada de qual imagem ou vídeo deveria acompanhar esta postagem caso não haja uma imagem gerada. Descreva o cenário, os elementos militares, a iluminação e o sentimento que a imagem deve transmitir.
 
       REQUISITOS ESPECÍFICOS POR FORMATO:
       1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. A Ideia-Força "${params.ideiaForca}" DEVE ser obrigatoriamente integrada ao texto logo no PRIMEIRO parágrafo. Use emojis de forma sóbria.
@@ -151,7 +153,6 @@ export async function generateOperationalContent(params: GenerationParams): Prom
     if (!GEMINI_KEY) throw new Error("A chave GEMINI_API_KEY não foi encontrada.");
     
     const isFlash = params.provider === AIProvider.GEMINI_FLASH;
-    const modelToUse = isFlash ? TEXT_MODEL_FLASH : TEXT_MODEL_STRATEGIC;
 
     const contents = { 
       parts: [
@@ -160,7 +161,7 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       ] 
     };
 
-    const response = await callGeminiWithFallback(modelToUse, contents, systemInstruction, !isFlash);
+    const response = await callGeminiWithFallback(contents, systemInstruction, !isFlash);
 
     const content = JSON.parse(response.text || '{}') as SocialMediaContent;
     const groundingLinks = response.candidates?.[0]?.groundingMetadata?.groundingChunks

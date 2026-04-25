@@ -377,7 +377,14 @@ const App: React.FC = () => {
                   </motion.div>
                 )}
                 
-                <DeliverableCard title="Social Media Institutional" icon={<Icons.Camera className="w-5 h-5" />} badge="Instagram/FB" content={result.instagram} imageUrl={result.imageUrl} />
+                <DeliverableCard 
+                  title="Social Media Institutional" 
+                  icon={<Icons.Camera className="w-5 h-5" />} 
+                  badge="Instagram/FB" 
+                  content={result.instagram} 
+                  imageUrl={result.imageUrl} 
+                  visualSuggestion={result.visualIdentitySuggestion}
+                />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <motion.div 
