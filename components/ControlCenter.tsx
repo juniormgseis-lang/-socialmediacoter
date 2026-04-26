@@ -78,12 +78,12 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
         <label className="block text-[12px] font-black text-text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
           <Palette className="w-4 h-4 text-secondary-theme" /> Identidade Visual
         </label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-row gap-2">
           {Object.values(VisualStyle).map((v) => (
             <button
               key={v}
               onClick={() => setStyle(v)}
-              className={`py-4 px-4 rounded-2xl text-xs font-black uppercase tracking-wider transition-all border-2 ${
+              className={`py-4 px-4 rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all border-2 flex-1 ${
                 style === v 
                   ? 'bg-primary-theme text-primary-contrast border-primary-theme shadow-xl' 
                   : 'bg-background/40 text-text-secondary border-border hover:border-secondary-theme hover:bg-secondary-theme/5'

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ControlCenter } from './components/ControlCenter';
 import { DeliverableCard } from './components/DeliverableCard';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
+import { LoginOverlay } from './components/LoginOverlay';
 import { Icons, COTER_LOGO_URL } from './constants';
 import { VisualStyle, ContentTone, ReferenceImage, SocialMediaContent, LinhaDeEsforco, IDEIAS_FORCA_MAP, AIProvider } from './types';
 import { generateOperationalContent, generateOperationalImage } from './services/aiService';
@@ -29,6 +30,22 @@ const App: React.FC = () => {
   const [result, setResult] = useState<SocialMediaContent | null>(null);
   const [logoError, setLogoError] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info', text: string } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem('coter_auth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (password: string) => {
+    if (password === '@coter') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('coter_auth', 'true');
+      showStatus('success', 'Acesso autorizado. Missão iniciada.');
+    }
+  };
 
   useEffect(() => {
     const opcoes = IDEIAS_FORCA_MAP[linha];
@@ -141,6 +158,12 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-text-primary font-sans transition-colors duration-300">
       <AnimatePresence>
+        {!isAuthenticated && (
+          <LoginOverlay onLogin={handleLogin} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {statusMessage && (
           <motion.div 
             initial={{ opacity: 0, y: -50 }}
@@ -165,17 +188,17 @@ const App: React.FC = () => {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full -mr-64 -mt-64 blur-[120px]"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
-          {/* Logo Centralizada no Topo */}
-          <div className="flex justify-center items-center mb-10">
-            <motion.img 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              src={COTER_LOGO_URL} 
-              alt="Logo COTER"
-              className="h-[100px] w-auto object-contain drop-shadow-2xl"
-              referrerPolicy="no-referrer"
-            />
-          </div>
+            {/* Logo Centralizada no Topo */}
+            <div className="flex justify-center items-center mb-10">
+              <motion.img 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                src={COTER_LOGO_URL} 
+                alt="Logo COTER"
+                className="h-[100px] w-auto object-contain drop-shadow-2xl"
+                referrerPolicy="no-referrer"
+              />
+            </div>
 
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="space-y-4">
@@ -453,6 +476,22 @@ const App: React.FC = () => {
           </div>
         </div>
       </main>
+
+      <div className="max-w-7xl mx-auto px-4 flex justify-center">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            sessionStorage.removeItem('coter_auth');
+            setIsAuthenticated(false);
+            showStatus('info', 'Sessão encerrada.');
+          }}
+          className="flex items-center gap-3 px-8 py-4 bg-red-600/10 hover:bg-red-600/20 text-red-600 rounded-2xl border border-red-500/30 transition-all font-black uppercase tracking-[0.2em] text-[10px] mb-8 shadow-sm hover:shadow-red-500/10"
+        >
+          <Trash2 className="w-4 h-4" />
+          Sair do Sistema
+        </motion.button>
+      </div>
 
       <footer className="max-w-7xl mx-auto py-16 px-4 text-center border-t border-border space-y-6">
         <div className="space-y-1">

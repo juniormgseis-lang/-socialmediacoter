@@ -23,7 +23,14 @@ Toda a geração de texto é baseada na persona do **TC Luiz Alves**, caracteriz
 
 ---
 
-## 3. Requisitos de Conteúdo (Implementação Técnica)
+## 3. Segurança e Acesso
+A plataforma possui uma camada de proteção para garantir que apenas pessoal autorizado utilize o motor de IA:
+- **Senha de Acesso:** `@coter`
+- **Sessão:** A autenticação é mantida durante a sessão do navegador. Ao clicar no ícone de lixeira (Encerrar Sessão) no cabeçalho ou fechar a aba, a senha será solicitada novamente.
+
+---
+
+## 4. Requisitos de Conteúdo (Implementação Técnica)
 
 Conforme as últimas atualizações, o sistema segue rigorosamente os seguintes parâmetros de formatação:
 
@@ -43,7 +50,7 @@ Conforme as últimas atualizações, o sistema segue rigorosamente os seguintes 
 
 ---
 
-## 4. Anexo: Lógica do Script (`aiService.ts`)
+## 5. Anexo: Lógica do Script (`aiService.ts`)
 
 Abaixo está a representação da lógica de prompt implementada no serviço de IA para garantir a padronização:
 
@@ -62,7 +69,7 @@ REQUISITOS ESPECÍFICOS POR FORMATO:
 
 ---
 
-## 5. Créditos e Equipe
+## 6. Créditos e Equipe
 - **Concepção:** TC Luiz Alves
 - **Desenvolvimento e Implementação:** ST Ernani P. Júnior
 
