@@ -4,6 +4,7 @@ import { ControlCenter } from './components/ControlCenter';
 import { DeliverableCard } from './components/DeliverableCard';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 import { LoginOverlay } from './components/LoginOverlay';
+import { ManualOverlay } from './components/ManualOverlay';
 import { Icons, COTER_LOGO_URL } from './constants';
 import { VisualStyle, ContentTone, ReferenceImage, SocialMediaContent, LinhaDeEsforco, IDEIAS_FORCA_MAP, AIProvider } from './types';
 import { generateOperationalContent, generateOperationalImage } from './services/aiService';
@@ -31,6 +32,7 @@ const App: React.FC = () => {
   const [logoError, setLogoError] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info', text: string } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showManual, setShowManual] = useState(false);
 
   useEffect(() => {
     const authStatus = sessionStorage.getItem('coter_auth');
@@ -139,12 +141,22 @@ const App: React.FC = () => {
       };
       const textContent = await generateOperationalContent(params);
       let generatedImageUrl = undefined;
+      let imageError = undefined;
       
       if (generateImageEnabled) {
-        generatedImageUrl = await generateOperationalImage(params);
+        try {
+          generatedImageUrl = await generateOperationalImage(params);
+        } catch (error: any) {
+          console.error('Image Generation Error:', error);
+          imageError = error.message || 'Cota excedida ou falha no motor de imagem.';
+        }
       }
 
-      setResult({ ...textContent, imageUrl: generatedImageUrl });
+      setResult({ 
+        ...textContent, 
+        imageUrl: generatedImageUrl,
+        imageGenerationError: imageError 
+      });
       showStatus('success', 'Estratégia gerada com sucesso.');
     } catch (error: any) {
       console.error(error);
@@ -160,6 +172,12 @@ const App: React.FC = () => {
       <AnimatePresence>
         {!isAuthenticated && (
           <LoginOverlay onLogin={handleLogin} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showManual && (
+          <ManualOverlay onClose={() => setShowManual(false)} />
         )}
       </AnimatePresence>
 
@@ -219,6 +237,22 @@ const App: React.FC = () => {
                   <span className="h-[4px] w-12 bg-emerald-500 rounded-full shadow-[0_0_15px_#10b981]"></span>
                 </div>
                 <p className="text-[12px] font-mono text-white/90 font-bold uppercase tracking-[0.5em] mt-3 block drop-shadow-sm brightness-110">A VITÓRIA TERRESTRE COMEÇA AQUI!</p>
+                
+                <motion.button 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  onClick={() => setShowManual(true)}
+                  className="mt-6 px-6 py-3 bg-white/5 hover:bg-white/15 rounded-2xl border border-white/10 hover:border-white/30 transition-all flex items-center gap-4 group backdrop-blur-[2px]"
+                >
+                  <div className="p-2 bg-emerald-500 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:scale-110 transition-transform">
+                    <Icons.BookOpen className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 leading-none mb-1">Doutrina / Manual</p>
+                    <p className="text-[8px] font-black uppercase tracking-tighter text-white/40 leading-none">Clique para visualizar o Guia</p>
+                  </div>
+                </motion.button>
               </div>
             </div>
           </div>
@@ -407,6 +441,7 @@ const App: React.FC = () => {
                   content={result.instagram} 
                   imageUrl={result.imageUrl} 
                   visualSuggestion={result.visualIdentitySuggestion}
+                  generationError={result.imageGenerationError}
                 />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

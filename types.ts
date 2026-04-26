@@ -156,6 +156,7 @@ export interface SocialMediaContent {
   conflictWarnings?: string;
   imageUrl?: string;
   visualIdentitySuggestion?: string;
+  imageGenerationError?: string;
 }
 
 export interface ReferenceImage {

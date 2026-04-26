@@ -13,9 +13,10 @@ interface DeliverableCardProps {
   badge?: string;
   imageUrl?: string;
   visualSuggestion?: string;
+  generationError?: string;
 }
 
-export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, content, badge, imageUrl, visualSuggestion }) => {
+export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, content, badge, imageUrl, visualSuggestion, generationError }) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleDownloadImage = () => {
@@ -148,14 +149,33 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, c
       )}
 
       {!imageUrl && visualSuggestion && (
-        <div className="bg-secondary-theme/5 border-b border-border p-6 flex items-start gap-4">
-          <div className="p-3 bg-secondary-theme text-white rounded-xl shadow-lg shrink-0">
-            <Icons.Camera className="w-5 h-5" />
+        <div className={`bg-secondary-theme/5 border-b border-border p-6 flex items-start gap-4 ${generationError ? 'border-l-4 border-l-amber-500 bg-amber-50/50' : ''}`}>
+          <div className={`p-3 rounded-xl shadow-lg shrink-0 ${generationError ? 'bg-amber-600' : 'bg-secondary-theme'} text-white`}>
+            {generationError ? <Icons.AlertTriangle className="w-5 h-5" /> : <Icons.Camera className="w-5 h-5" />}
           </div>
-          <div className="space-y-2">
-            <h4 className="text-[10px] font-black text-secondary-theme uppercase tracking-widest">Sugestão de Identidade Visual</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h4 className={`text-[10px] font-black uppercase tracking-widest ${generationError ? 'text-amber-800' : 'text-secondary-theme'}`}>
+                {generationError ? 'Limite de Geração Atingido' : 'Sugestão de Identidade Visual'}
+              </h4>
+              {generationError && (
+                <span className="bg-amber-100 text-amber-800 text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Cota Excedida</span>
+              )}
+            </div>
+
+            {generationError && (
+              <p className="text-[11px] text-amber-900 font-bold leading-none bg-amber-200/30 p-2 rounded border border-amber-200">
+                O motor de imagem está indisponível agora. Abaixo, fornecemos um roteiro detalhado para que você possa gerar ou produzir esta imagem em ferramentas externas.
+              </p>
+            )}
+
             <p className="text-xs text-text-primary font-bold italic leading-relaxed">"{visualSuggestion}"</p>
-            <p className="text-[10px] text-text-secondary font-medium uppercase mt-2 opacity-60 italic">* Use esta descrição para orientar a produção visual manual ou via IA externa.</p>
+            
+            <div className="pt-2 space-y-2">
+              <p className="text-[10px] text-text-secondary font-medium uppercase opacity-60 italic leading-tight">
+                * Sugestão de Ferramentas: <span className="font-bold underline">Adobe Firefly</span>, <span className="font-bold underline">Midjourney</span>, <span className="font-bold underline">Microsoft Designer</span> ou <span className="font-bold underline">DALL-E</span>. Copie o texto acima e utilize como prompt nestas plataformas.
+              </p>
+            </div>
           </div>
         </div>
       )}
