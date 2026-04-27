@@ -147,10 +147,16 @@ export const IDEIAS_FORCA_MAP: Record<LinhaDeEsforco, string[]> = {
 export interface SocialMediaContent {
   instagram: string;
   instagramTitle: string;
+  instagramTitleOptions: string[];
+  instagramTitleJustification: string;
   whatsapp: string;
   whatsappTitle: string;
+  whatsappTitleOptions: string[];
+  whatsappTitleJustification: string;
   article: string;
   articleTitle: string;
+  articleTitleOptions: string[];
+  articleTitleJustification: string;
   riskAnalysis: string;
   impactMetrics: string;
   sources: string[];

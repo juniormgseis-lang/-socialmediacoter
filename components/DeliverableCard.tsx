@@ -9,6 +9,8 @@ import { Icons } from '../constants';
 interface DeliverableCardProps {
   title: string;
   titleGenerated?: string;
+  titleOptions?: string[];
+  titleJustification?: string;
   icon: React.ReactNode;
   content: string;
   badge?: string;
@@ -20,6 +22,8 @@ interface DeliverableCardProps {
 export const DeliverableCard: React.FC<DeliverableCardProps> = ({ 
   title, 
   titleGenerated, 
+  titleOptions,
+  titleJustification,
   icon, 
   content, 
   badge, 
@@ -28,6 +32,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
   generationError 
 }) => {
   const [copied, setCopied] = React.useState(false);
+  const [showOptions, setShowOptions] = React.useState(false);
 
   const handleDownloadImage = () => {
     if (!imageUrl) return;
@@ -203,9 +208,51 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
 
       <div className="p-6 flex-grow space-y-6">
         {titleGenerated && (
-          <div className="border-b border-border pb-4">
-            <h4 className="text-[10px] font-black text-secondary-theme uppercase tracking-[0.2em] mb-2">Headline do Comando</h4>
-            <p className="text-xl font-black text-text-primary tracking-tighter uppercase italic leading-none">{titleGenerated}</p>
+          <div className="border-b border-border pb-4 space-y-4">
+            <div>
+              <h4 className="text-[10px] font-black text-secondary-theme uppercase tracking-[0.2em] mb-2">Headline do Comando</h4>
+              <p className="text-xl font-black text-text-primary tracking-tighter uppercase italic leading-tight">{titleGenerated}</p>
+            </div>
+            
+            {titleOptions && titleOptions.length > 0 && (
+              <div className="bg-background/20 rounded-xl p-4 border border-border/50">
+                <button 
+                  onClick={() => setShowOptions(!showOptions)}
+                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  <span>Ver outras opções de títulos</span>
+                  <Icons.AlertTriangle className={`w-3 h-3 transition-transform ${showOptions ? 'rotate-180' : ''}`} />
+                </button>
+                
+                <AnimatePresence>
+                  {showOptions && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-4 space-y-3">
+                        {titleOptions.map((opt, idx) => (
+                          <div key={idx} className={`p-3 rounded-lg border text-[11px] font-bold uppercase tracking-tight leading-tight ${opt === titleGenerated ? 'bg-secondary-theme/10 border-secondary-theme/30 text-text-primary shadow-sm' : 'bg-transparent border-transparent text-text-secondary'}`}>
+                            <div className="flex justify-between gap-2">
+                              <span>{opt}</span>
+                              {opt === titleGenerated && <span className="text-[8px] px-1 bg-secondary-theme text-white rounded shrink-0 h-fit">MELHOR</span>}
+                            </div>
+                          </div>
+                        ))}
+                        {titleJustification && (
+                          <div className="mt-2 p-3 bg-primary-theme/5 rounded-lg border border-primary-theme/10">
+                            <p className="text-[9px] font-black text-primary-theme uppercase tracking-wider mb-1">Análise da Melhor Escolha</p>
+                            <p className="text-[10px] text-text-primary font-bold italic">"{titleJustification}"</p>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         )}
         <div className="prose prose-sm max-w-none text-text-primary leading-relaxed font-normal markdown-body">

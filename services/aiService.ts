@@ -37,17 +37,28 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
             properties: {
               instagram: { type: Type.STRING },
               instagramTitle: { type: Type.STRING },
+              instagramTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+              instagramTitleJustification: { type: Type.STRING },
               whatsapp: { type: Type.STRING },
               whatsappTitle: { type: Type.STRING },
+              whatsappTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+              whatsappTitleJustification: { type: Type.STRING },
               article: { type: Type.STRING },
               articleTitle: { type: Type.STRING },
+              articleTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+              articleTitleJustification: { type: Type.STRING },
               riskAnalysis: { type: Type.STRING },
               impactMetrics: { type: Type.STRING },
               sources: { type: Type.ARRAY, items: { type: Type.STRING } },
               conflictWarnings: { type: Type.STRING },
               visualIdentitySuggestion: { type: Type.STRING }
             },
-            required: ["instagram", "instagramTitle", "whatsapp", "whatsappTitle", "article", "articleTitle", "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"]
+            required: [
+              "instagram", "instagramTitle", "instagramTitleOptions", "instagramTitleJustification",
+              "whatsapp", "whatsappTitle", "whatsappTitleOptions", "whatsappTitleJustification",
+              "article", "articleTitle", "articleTitleOptions", "articleTitleJustification",
+              "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"
+            ]
           }
         }
       });
@@ -125,11 +136,17 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       ESTRUTURA JSON:
       {
         "instagram": "texto da legenda",
-        "instagramTitle": "Headline Institucional COTER",
+        "instagramTitle": "título selecionado como melhor",
+        "instagramTitleOptions": ["opção 1", "opção 2", "opção 3"],
+        "instagramTitleJustification": "justificativa de 1 linha com base na ideia-força",
         "whatsapp": "texto da mensagem",
-        "whatsappTitle": "Assunto Institucional COTER",
+        "whatsappTitle": "título selecionado como melhor",
+        "whatsappTitleOptions": ["opção 1", "opção 2", "opção 3"],
+        "whatsappTitleJustification": "justificativa de 1 linha com base na ideia-força",
         "article": "markdown",
-        "articleTitle": "Título do Artigo Doutrinário COTER",
+        "articleTitle": "título selecionado como melhor",
+        "articleTitleOptions": ["opção 1", "opção 2", "opção 3"],
+        "articleTitleJustification": "justificativa de 1 linha com base na ideia-força",
         "riskAnalysis": "texto",
         "impactMetrics": "texto",
         "sources": ["fonte1", "fonte2"],
@@ -139,7 +156,9 @@ export async function generateOperationalContent(params: GenerationParams): Prom
 
       INSTRUÇÕES PARA GERAÇÃO DOS TÍTULOS (HEADLINES):
       Atue como um especialista em Comunicação Estratégica do Exército Brasileiro, seguindo o padrão institucional do COTER (Comando de Operações Terrestres).
-      Sua missão é criar títulos para matérias institucionais. Para cada formato (Instagram, WhatsApp e Artigo), você deve gerar internamente 3 opções e selecionar a MELHOR para incluir no JSON, obedecendo rigorosamente:
+      Sua missão é criar títulos para matérias institucionais. Para cada formato (Instagram, WhatsApp e Artigo), você deve obrigatoriamente gerar 3 títulos institucionais no padrão COTER, indicar o melhor no campo "Title" e listar as 3 opções no campo "Options", justificando a escolha no campo "Justification".
+      
+      CRITÉRIOS DOS TÍTULOS:
       1. Título claro, direto e objetivo.
       2. Deve conter VERBO DE AÇÃO (ex: realiza, coordena, participa, reforça, demonstra).
       3. O SUJEITO INSTITUCIONAL deve estar explícito (ex: COTER, Exército Brasileiro ou Força Terrestre).

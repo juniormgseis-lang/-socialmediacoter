@@ -437,6 +437,8 @@ const App: React.FC = () => {
                 <DeliverableCard 
                   title="Social Media Institutional" 
                   titleGenerated={result.instagramTitle}
+                  titleOptions={result.instagramTitleOptions}
+                  titleJustification={result.instagramTitleJustification}
                   icon={<Icons.Camera className="w-5 h-5" />} 
                   badge="Instagram/FB" 
                   content={result.instagram} 
@@ -469,6 +471,8 @@ const App: React.FC = () => {
                 <DeliverableCard 
                   title="WhatsApp Corporativo" 
                   titleGenerated={result.whatsappTitle}
+                  titleOptions={result.whatsappTitleOptions}
+                  titleJustification={result.whatsappTitleJustification}
                   icon={<Icons.Send className="w-5 h-5" />} 
                   badge="Difusão Direta" 
                   content={result.whatsapp} 
@@ -477,6 +481,8 @@ const App: React.FC = () => {
                 <DeliverableCard 
                   title="Artigo Técnico-Doutrinário" 
                   titleGenerated={result.articleTitle}
+                  titleOptions={result.articleTitleOptions}
+                  titleJustification={result.articleTitleJustification}
                   icon={<Icons.Shield className="w-5 h-5" />} 
                   badge="Pensamento Militar" 
                   content={result.article} 
