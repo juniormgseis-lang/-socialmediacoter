@@ -87,6 +87,108 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
           </div>
         </section>
 
+        {/* Fontes de Inteligência */}
+        <section className="space-y-8">
+          <div className="flex items-center gap-4">
+            <FileText className="w-6 h-6 text-info-accent" />
+            <h3 className="text-2xl font-black uppercase italic tracking-tighter">Fontes de Inteligência</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-surface border border-border p-8 rounded-[32px] space-y-3 shadow-sm border-l-4 border-l-secondary-theme">
+              <div className="flex items-center gap-2 text-secondary-theme/60 group">
+                <Target className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Contexto Situacional</span>
+              </div>
+              <h4 className="text-lg font-black uppercase italic tracking-tighter">Missão / Evento</h4>
+              <p className="text-xs text-text-secondary leading-relaxed font-bold uppercase tracking-tight">
+                Descrição livre da operação. É a base factual para que a IA processe os dados reais da missão.
+              </p>
+            </div>
+            <div className="bg-surface border-2 border-info-accent/20 p-8 rounded-[32px] space-y-6 shadow-lg shadow-info-accent/5 border-l-4 border-l-info-accent md:col-span-2">
+              <div className="flex items-center gap-2 text-info-accent/60 group">
+                <FileText className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Doutrina Ativa</span>
+              </div>
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xl font-black uppercase italic tracking-tighter mb-2 text-info-accent">Inteligência Técnica (PDF)</h4>
+                  <p className="text-sm text-text-primary leading-relaxed font-bold">
+                    O que deve ser inserido é o <span className="text-info-accent">documento base (contexto)</span> que servirá de fonte primária para a inteligência artificial.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-info-accent/60">Conteúdos destinados ao Upload:</p>
+                    <ul className="space-y-3">
+                      <li className="flex gap-3">
+                        <ShieldCheck className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          <span className="text-text-primary">Diretrizes Estratégicas:</span> Documentos formais e ordens de operações.
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <BookOpen className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          <span className="text-text-primary">Doutrina Militar:</span> Trechos de manuais de campanha ou regulamentos.
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <Target className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          <span className="text-text-primary">Matérias Técnicas:</span> Informações detalhadas sobre a missão ou evento.
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <FileText className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          <span className="text-text-primary">Artigos de Referência:</span> Substância para extração de fatos e métricas.
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-info-accent/60">Finalidade do Processamento:</p>
+                    <ul className="space-y-3">
+                      <li className="flex gap-3">
+                        <Zap className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          Extrair fontes de consulta reais e fidedignas.
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <Zap className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          Alimentar os indicadores de impacto (KPIs).
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <Zap className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          Realizar análise de risco reputacional profunda.
+                        </p>
+                      </li>
+                      <li className="flex gap-3">
+                        <Zap className="w-4 h-4 text-info-accent shrink-0" />
+                        <p className="text-[11px] text-text-secondary font-bold uppercase tracking-tight">
+                          Fundamentação técnica rigorosa no padrão COTER.
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-5 bg-info-accent/10 rounded-2xl border-2 border-info-accent/20">
+                  <p className="text-[12px] text-info-accent font-black uppercase tracking-wider text-center italic leading-tight">
+                    "É onde você 'anexa o conhecimento' para que a IA não invente dados, mas sim refine o que já existe no padrão COTER."
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Regras de Geração */}
         <section className="space-y-8">
           <div className="flex items-center gap-4">
@@ -168,6 +270,19 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
               <li>Será gerado automaticamente um <strong>"Prompt Visual"</strong> em texto.</li>
               <li>Você poderá copiar este texto e utilizá-lo em ferramentas gratuitas como Adobe Firefly ou Bing Designer.</li>
             </ol>
+          </div>
+        </section>
+
+        {/* Observação Final */}
+        <section className="bg-red-500/10 border border-red-500/30 p-8 rounded-3xl">
+          <div className="flex gap-4">
+            <AlertTriangle className="w-6 h-6 text-red-600 shrink-0" />
+            <div className="space-y-3">
+              <h4 className="text-sm font-black uppercase text-red-600 tracking-widest">Observação Importante</h4>
+              <p className="text-xs text-text-secondary leading-relaxed font-bold uppercase tracking-tight italic">
+                Os textos produzidos por este aplicativo são gerados com o emprego de Inteligência Artificial e possuem caráter sugestivo, destinando-se a orientar a elaboração de matérias em conformidade com os princípios da Comunicação Estratégica no âmbito do Comando de Operações Terrestres, contribuindo para a padronização da linguagem institucional, sem prejuízo da necessária revisão, adequação e validação por parte do usuário.
+              </p>
+            </div>
           </div>
         </section>
 

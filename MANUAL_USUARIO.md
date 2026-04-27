@@ -30,7 +30,33 @@ A plataforma possui uma camada de proteção para garantir que apenas pessoal au
 
 ---
 
-## 4. Requisitos de Conteúdo (Implementação Técnica)
+## 4. Fontes de Inteligência e Contexto
+
+Para garantir a precisão doutrinária e o alinhamento estratégico, o sistema utiliza duas fontes principais de dados:
+
+### 🎯 Contexto Situacional (Missão / Evento)
+Descrição livre da operação ou evento. É a base factual para que a IA processe os dados reais da missão.
+
+### 📄 Inteligência Técnica (PDF)
+Nesta seção, o que deve ser inserido é o documento base (contexto) que servirá de fonte primária para a inteligência artificial. De acordo com a estrutura do sistema, esse campo é destinado ao upload de arquivos em PDF que contenham:
+
+- **Diretrizes Estratégicas:** Documentos formais e ordens de operações.
+- **Doutrina Militar:** Trechos de manuais de campanha ou regulamentos que devem embasar o texto.
+- **Matérias Técnicas ou Relatórios:** Informações detalhadas sobre a missão ou evento operacional.
+- **Artigos de Referência:** Qualquer material escrito que forneça a "substância" técnica para que a persona (**TC Luiz Alves**) possa extrair fatos, fontes e métricas de impacto.
+
+**Processamento de Dados:**
+No sistema, esse arquivo é processado (indexado) e usado para:
+1. Extrair fontes de consulta reais.
+2. Alimentar os indicadores de impacto (KPIs).
+3. Realizar a análise de risco reputacional.
+4. Garantir que os posts de redes sociais e artigos não sejam apenas criativos, mas tecnicamente fundamentados na doutrina do Exército.
+
+> **Resumo:** É onde você "anexa o conhecimento" para que a IA não invente dados, mas sim refine o que já existe no padrão COTER.
+
+---
+
+## 5. Requisitos de Conteúdo (Implementação Técnica)
 
 Conforme as últimas atualizações, o sistema segue rigorosamente os seguintes parâmetros de formatação:
 
@@ -72,6 +98,12 @@ REQUISITOS ESPECÍFICOS POR FORMATO:
 ## 6. Créditos e Equipe
 - **Concepção:** TC Luiz Alves
 - **Desenvolvimento e Implementação:** ST Ernani P. Júnior
+
+---
+
+## 7. Observação Legal e Institucional
+
+Os textos produzidos por este aplicativo são gerados com o emprego de Inteligência Artificial e possuem caráter sugestivo, destinando-se a orientar a elaboração de matérias em conformidade com os princípios da Comunicação Estratégica no âmbito do Comando de Operações Terrestres, contribuindo para a padronização da linguagem institucional, sem prejuízo da necessária revisão, adequação e validação por parte do usuário.
 
 ---
 *Documento gerado automaticamente pelo sistema em 24 de Abril de 2026.*
