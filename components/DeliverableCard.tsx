@@ -8,6 +8,7 @@ import { Icons } from '../constants';
 
 interface DeliverableCardProps {
   title: string;
+  titleGenerated?: string;
   icon: React.ReactNode;
   content: string;
   badge?: string;
@@ -16,7 +17,16 @@ interface DeliverableCardProps {
   generationError?: string;
 }
 
-export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, content, badge, imageUrl, visualSuggestion, generationError }) => {
+export const DeliverableCard: React.FC<DeliverableCardProps> = ({ 
+  title, 
+  titleGenerated, 
+  icon, 
+  content, 
+  badge, 
+  imageUrl, 
+  visualSuggestion, 
+  generationError 
+}) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleDownloadImage = () => {
@@ -48,20 +58,31 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, c
     // Título do Card
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text(title.toUpperCase(), margin, 45);
+    doc.text(title.toUpperCase(), margin, 42);
 
-    // Conteúdo (Limpeza de Markdown para o PDF simples)
+    let currentY = 52;
+
+    // Título Gerado (Headline)
+    if (titleGenerated) {
+      doc.setFontSize(14);
+      doc.setTextColor(30, 41, 59); // slate-800
+      const titleLines = doc.splitTextToSize(titleGenerated.toUpperCase(), contentWidth);
+      doc.text(titleLines, margin, currentY);
+      currentY += (titleLines.length * 8) + 5;
+    }
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
+    doc.setTextColor(0);
     const cleanText = content
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')
       .replace(/<u>(.*?)<\/u>/g, '$1');
     
     const lines = doc.splitTextToSize(cleanText, contentWidth);
-    doc.text(lines, margin, 55);
+    doc.text(lines, margin, currentY);
 
-    let nextY = 55 + (lines.length * 7);
+    let nextY = currentY + (lines.length * 7);
 
     if (!imageUrl && visualSuggestion) {
       nextY += 10;
@@ -180,7 +201,13 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({ title, icon, c
         </div>
       )}
 
-      <div className="p-6 flex-grow">
+      <div className="p-6 flex-grow space-y-6">
+        {titleGenerated && (
+          <div className="border-b border-border pb-4">
+            <h4 className="text-[10px] font-black text-secondary-theme uppercase tracking-[0.2em] mb-2">Headline do Comando</h4>
+            <p className="text-xl font-black text-text-primary tracking-tighter uppercase italic leading-none">{titleGenerated}</p>
+          </div>
+        )}
         <div className="prose prose-sm max-w-none text-text-primary leading-relaxed font-normal markdown-body">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>

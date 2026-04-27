@@ -436,6 +436,7 @@ const App: React.FC = () => {
                 
                 <DeliverableCard 
                   title="Social Media Institutional" 
+                  titleGenerated={result.instagramTitle}
                   icon={<Icons.Camera className="w-5 h-5" />} 
                   badge="Instagram/FB" 
                   content={result.instagram} 
@@ -465,8 +466,21 @@ const App: React.FC = () => {
                   </motion.div>
                 </div>
 
-                <DeliverableCard title="WhatsApp Corporativo" icon={<Icons.Send className="w-5 h-5" />} badge="Difusão Direta" content={result.whatsapp} />
-                <DeliverableCard title="Artigo Técnico-Doutrinário" icon={<Icons.Shield className="w-5 h-5" />} badge="Pensamento Militar" content={result.article} />
+                <DeliverableCard 
+                  title="WhatsApp Corporativo" 
+                  titleGenerated={result.whatsappTitle}
+                  icon={<Icons.Send className="w-5 h-5" />} 
+                  badge="Difusão Direta" 
+                  content={result.whatsapp} 
+                />
+                
+                <DeliverableCard 
+                  title="Artigo Técnico-Doutrinário" 
+                  titleGenerated={result.articleTitle}
+                  icon={<Icons.Shield className="w-5 h-5" />} 
+                  badge="Pensamento Militar" 
+                  content={result.article} 
+                />
 
                 <section className="bg-surface p-12 rounded-3xl shadow-2xl border border-border relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-48 h-48 bg-secondary-theme/5 -mr-24 -mt-24 rounded-full"></div>

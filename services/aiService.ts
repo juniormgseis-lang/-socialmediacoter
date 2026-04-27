@@ -36,7 +36,9 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
             type: Type.OBJECT,
             properties: {
               instagram: { type: Type.STRING },
+              instagramTitle: { type: Type.STRING },
               whatsapp: { type: Type.STRING },
+              whatsappTitle: { type: Type.STRING },
               article: { type: Type.STRING },
               articleTitle: { type: Type.STRING },
               riskAnalysis: { type: Type.STRING },
@@ -45,7 +47,7 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
               conflictWarnings: { type: Type.STRING },
               visualIdentitySuggestion: { type: Type.STRING }
             },
-            required: ["instagram", "whatsapp", "article", "articleTitle", "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"]
+            required: ["instagram", "instagramTitle", "whatsapp", "whatsappTitle", "article", "articleTitle", "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"]
           }
         }
       });
@@ -122,10 +124,12 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       
       ESTRUTURA JSON:
       {
-        "instagram": "texto",
-        "whatsapp": "texto",
+        "instagram": "texto da legenda",
+        "instagramTitle": "título curto e impactante (HEADLINE)",
+        "whatsapp": "texto da mensagem",
+        "whatsappTitle": "chamada curta (ASSUNTO)",
         "article": "markdown",
-        "articleTitle": "título",
+        "articleTitle": "título do artigo doutrinário",
         "riskAnalysis": "texto",
         "impactMetrics": "texto",
         "sources": ["fonte1", "fonte2"],
@@ -136,6 +140,7 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       REQUISITOS GERAIS PARA TODOS OS TEXTOS:
       1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n) para garantir o espaçamento visual.
       2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
+      3. Crie títulos (HEADLINES) impactantes e profissionais, em conformidade com as diretrizes da persona, para cada um dos formatos. Os títulos podem ser similares se fizer sentido doutrinariamente.
 
       SUGESTÃO DE IDENTIDADE VISUAL:
       Sempre apresente uma sugestão detalhada de qual imagem ou vídeo deveria acompanhar esta postagem caso não haja uma imagem gerada. Descreva o cenário, os elementos militares, a iluminação e o sentimento que a imagem deve transmitir.
