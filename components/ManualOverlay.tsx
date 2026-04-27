@@ -101,7 +101,7 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
               </div>
               <div className="space-y-2">
                 <h4 className="font-black uppercase text-sm">Instagram</h4>
-                <p className="text-sm text-text-secondary">Exatamente <strong>3 parágrafos</strong>. A <strong>Ideia-Força</strong> deve ser integrada obrigatoriamente no <strong>primeiro parágrafo</strong>. Tom técnico com emojis sóbrios.</p>
+                <p className="text-sm text-text-secondary">Exatamente <strong>3 parágrafos</strong>. A <strong>Ideia-Força</strong> deve ser integrada obrigatoriamente no <strong>primeiro parágrafo</strong>. Tom técnico com emojis sóbrios. <strong>Geração de 3 opções de Títulos Institucionais.</strong></p>
               </div>
             </div>
 
@@ -111,7 +111,7 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
               </div>
               <div className="space-y-2">
                 <h4 className="font-black uppercase text-sm">WhatsApp</h4>
-                <p className="text-sm text-text-secondary">Texto ágil e direto, focado na rapidez da leitura operacional. Sem limitação rígida de parágrafos.</p>
+                <p className="text-sm text-text-secondary">Texto ágil e direto, focado na rapidez da leitura operacional. Sem limitação rígida de parágrafos. <strong>Inclui Headline COTER e 3 opções de assunto.</strong></p>
               </div>
             </div>
 
@@ -121,9 +121,31 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
               </div>
               <div className="space-y-2">
                 <h4 className="font-black uppercase text-sm">Artigo Técnico</h4>
-                <p className="text-sm text-text-secondary">Conteúdo denso e detalhado, focado no aprofundamento do tema e fundamentação operacinal militar.</p>
+                <p className="text-sm text-text-secondary">Conteúdo denso e detalhado, focado no aprofundamento do tema e fundamentação operacinal militar. <strong>Mínimo de 3 sugestões de Títulos Corporativos.</strong></p>
               </div>
             </div>
+          </div>
+
+          <div className="bg-secondary-theme/5 border border-secondary-theme/20 p-8 rounded-3xl space-y-6">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="w-5 h-5 text-secondary-theme" />
+              <h4 className="font-black uppercase text-secondary-theme text-sm tracking-widest">Padrão COTER de Headlines</h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+              <ul className="space-y-2 text-[11px] font-bold text-text-secondary uppercase tracking-tight">
+                <li className="flex items-center gap-2">• Claro, direto e objetivo</li>
+                <li className="flex items-center gap-2">• Verbo de ação obrigatório</li>
+                <li className="flex items-center gap-2">• Sujeito Institucional explícito</li>
+              </ul>
+              <ul className="space-y-2 text-[11px] font-bold text-text-secondary uppercase tracking-tight">
+                <li className="flex items-center gap-2">• Alinhado à Ideia-Força</li>
+                <li className="flex items-center gap-2">• Sobriedade Institucional</li>
+                <li className="flex items-center gap-2">• Entre 50 e 70 caracteres</li>
+              </ul>
+            </div>
+            <p className="text-[10px] text-text-secondary font-black bg-white/50 p-3 rounded-lg border border-border inline-block">
+              "A INTELIGÊNCIA GERA 3 OPÇÕES E JUSTIFICA A ESCOLHA DA MELHOR COM BASE NA DOUTRINA."
+            </p>
           </div>
         </section>
 
