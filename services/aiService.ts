@@ -125,11 +125,11 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       ESTRUTURA JSON:
       {
         "instagram": "texto da legenda",
-        "instagramTitle": "título curto e impactante (HEADLINE)",
+        "instagramTitle": "Headline Institucional COTER",
         "whatsapp": "texto da mensagem",
-        "whatsappTitle": "chamada curta (ASSUNTO)",
+        "whatsappTitle": "Assunto Institucional COTER",
         "article": "markdown",
-        "articleTitle": "título do artigo doutrinário",
+        "articleTitle": "Título do Artigo Doutrinário COTER",
         "riskAnalysis": "texto",
         "impactMetrics": "texto",
         "sources": ["fonte1", "fonte2"],
@@ -137,10 +137,21 @@ export async function generateOperationalContent(params: GenerationParams): Prom
         "visualIdentitySuggestion": "descrição detalhada da imagem sugerida para este conteúdo"
       }
 
+      INSTRUÇÕES PARA GERAÇÃO DOS TÍTULOS (HEADLINES):
+      Atue como um especialista em Comunicação Estratégica do Exército Brasileiro, seguindo o padrão institucional do COTER (Comando de Operações Terrestres).
+      Sua missão é criar títulos para matérias institucionais. Para cada formato (Instagram, WhatsApp e Artigo), você deve gerar internamente 3 opções e selecionar a MELHOR para incluir no JSON, obedecendo rigorosamente:
+      1. Título claro, direto e objetivo.
+      2. Deve conter VERBO DE AÇÃO (ex: realiza, coordena, participa, reforça, demonstra).
+      3. O SUJEITO INSTITUCIONAL deve estar explícito (ex: COTER, Exército Brasileiro ou Força Terrestre).
+      4. Deve refletir a Ideia-Força: "${params.ideiaForca}".
+      5. Deve estar alinhado à Linha de Esforço: "${params.linha}".
+      6. Sobriedade institucional (sem adjetivações excessivas).
+      7. Extensão entre 50 e 70 caracteres.
+      8. Evite redundâncias.
+
       REQUISITOS GERAIS PARA TODOS OS TEXTOS:
       1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n) para garantir o espaçamento visual.
       2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
-      3. Crie títulos (HEADLINES) impactantes e profissionais, em conformidade com as diretrizes da persona, para cada um dos formatos. Os títulos podem ser similares se fizer sentido doutrinariamente.
 
       SUGESTÃO DE IDENTIDADE VISUAL:
       Sempre apresente uma sugestão detalhada de qual imagem ou vídeo deveria acompanhar esta postagem caso não haja uma imagem gerada. Descreva o cenário, os elementos militares, a iluminação e o sentimento que a imagem deve transmitir.
