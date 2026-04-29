@@ -17,7 +17,7 @@ Toda a geração de texto é baseada na persona do **TC Luiz Alves**, caracteriz
 
 ## 2. Fluxo de Operação
 1. **Definição de Tópico:** O usuário insere o assunto principal da postagem.
-2. **Ideia-Força:** Palavra ou frase chave que deve nortear o argumento e aparecer obrigatoriamente no texto.
+2. **Ideia-Força:** Conceito central que deve nortear o argumento. **Regra Crítica:** A ideia-força nunca deve ser copiada literalmente; ela deve ser obrigatoriamente parafraseada e destacada em negrito no texto final.
 3. **Seleção de Formato:** O sistema processa as instruções específicas para o canal desejado.
 4. **Geração IA:** O motor baseado em Gemini processa o prompt com as restrições militares aplicadas.
 
@@ -62,7 +62,7 @@ Conforme as últimas atualizações, o sistema segue rigorosamente os seguintes 
 
 ### 📸 Instagram
 - **Estrutura:** Exatamente **3 parágrafos**.
-- **Regra de Ouro:** A **Ideia-Força** deve ser integrada obrigatoriamente no **primeiro parágrafo**.
+- **Regra de Ouro:** A **Ideia-Força** deve ser integrada obrigatoriamente no **primeiro parágrafo**, mas de forma **parafraseada** (nunca literal) e em **negrito**.
 - **Visual:** Uso de emojis de forma sóbria e técnica.
 - **Espaçamento:** Parágrafos separados por duas quebras de linha (`\n\n`) no texto gerado.
 
@@ -85,10 +85,10 @@ Abaixo está a representação da lógica de prompt implementada no serviço de 
 REQUISITOS GERAIS PARA TODOS OS TEXTOS:
 1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n).
 2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
+3. **REGRA DA IDEIA-FORÇA:** É proibido copiar a frase literal da ideia-força. Ela deve ser reinterpretada semanticamente e destacada em **negrito**.
 
 REQUISITOS ESPECÍFICOS POR FORMATO:
-1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. 
-   A Ideia-Força deve ser integrada ao texto logo no PRIMEIRO parágrafo.
+1. INSTAGRAM: Exatamente 3 parágrafos. Paráfrase da Ideia-Força em **negrito** no 1º parágrafo.
 2. WHATSAPP: Texto ágil, sem limitação de parágrafos.
 3. ARTIGO TÉCNICO-DOUTRINÁRIO: Conteúdo denso, com parágrafos necessários para aprofundar o tema.
 ```

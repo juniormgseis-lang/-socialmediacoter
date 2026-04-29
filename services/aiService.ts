@@ -171,16 +171,17 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       REQUISITOS GERAIS PARA TODOS OS TEXTOS:
       1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n) para garantir o espaçamento visual.
       2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
+      3. **REGRA CRÍTICA DE REDAÇÃO (IDEIA-FORÇA):** A Ideia-Força "${params.ideiaForca}" NÃO deve ser reproduzida literalmente no texto final. Ela deve ser interpretada, parafraseada obrigatoriamente e adaptada ao contexto de forma natural, integrada ao texto (preferencialmente no início). É PROIBIDO copiar total ou parcialmente a ideia-força original. O trecho que representa essa ideia-força parafraseada DEVE permanecer em **negrito**.
 
       SUGESTÃO DE IDENTIDADE VISUAL:
       Sempre apresente uma sugestão detalhada de qual imagem ou vídeo deveria acompanhar esta postagem caso não haja uma imagem gerada. Descreva o cenário, os elementos militares, a iluminação e o sentimento que a imagem deve transmitir.
 
       REQUISITOS ESPECÍFICOS POR FORMATO:
-      1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. A Ideia-Força "${params.ideiaForca}" DEVE ser obrigatoriamente integrada ao texto logo no PRIMEIRO parágrafo. Use emojis de forma sóbria.
-      2. WHATSAPP: Texto ágil, sem limitação de parágrafos.
-      3. ARTIGO TÉCNICO-DOUTRINÁRIO: Produza um conteúdo denso e detalhado, com quantos parágrafos forem necessários para aprofundar o tema doutrinariamente.
+      1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. A paráfrase da Ideia-Força "${params.ideiaForca}" DEVE ser obrigatoriamente integrada ao texto logo no PRIMEIRO parágrafo e estar em **negrito**. Use emojis de forma sóbria.
+      2. WHATSAPP: Texto ágil, sem limitação de parágrafos. A Ideia-Força parafraseada deve estar em **negrito**.
+      3. ARTIGO TÉCNICO-DOUTRINÁRIO: Produza um conteúdo denso e detalhado, com quantos parágrafos forem necessários para aprofundar o tema doutrinariamente. A Ideia-Força parafraseada deve aparecer em **negrito** onde for introduzida.
 
-      DESTAQUE GERAL: A Ideia-Força "${params.ideiaForca}" deve ser integrada e destacada em **<u>texto</u>** em todos os formatos produzidos.
+      DESTAQUE GERAL: Nunca use a frase literal da Ideia-Força. Reinterprete-a e aplique o destaque em **negrito** na nova construção textual.
     `;
 
     const prompt = `Gere conteúdo estratégico para o tópico: "${params.topic}". Contexto: ${customDoctrineContext}`;

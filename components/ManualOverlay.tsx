@@ -197,13 +197,41 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
           </div>
           
           <div className="grid grid-cols-1 gap-6">
+            <div className="bg-red-500/5 border-2 border-red-500/20 p-8 rounded-3xl space-y-4">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+                <h4 className="font-black uppercase text-red-700 text-sm tracking-widest">Regra Crítica: Ideia-Força</h4>
+              </div>
+              <p className="text-sm text-text-primary leading-relaxed font-bold">
+                A "ideia-força" fornecida <span className="text-red-600 underline">NÃO deve ser reproduzida literalmente</span> no texto final.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase text-red-600/60">Obrigatoriedades:</p>
+                  <ul className="text-[11px] font-bold text-text-secondary space-y-1 uppercase">
+                    <li>• Interpretação conceitual</li>
+                    <li>• Paráfrase obrigatória</li>
+                    <li>• Adaptação ao contexto</li>
+                    <li>• **Destaque em negrito**</li>
+                  </ul>
+                </div>
+                <div className="space-y-2 bg-white/50 p-4 rounded-xl border border-red-100">
+                  <p className="text-[10px] font-black uppercase text-text-secondary">Exemplo Prático:</p>
+                  <p className="text-[10px] text-text-secondary leading-tight italic">
+                    <span className="text-red-500 line-through block mb-1">Original: "Ressaltar capacidades..."</span>
+                    <span className="text-emerald-700 font-bold block">Correto: "**evidenciar o nível de prontidão...**"</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-6 p-6 bg-surface border border-border rounded-2xl">
               <div className="p-4 bg-primary-theme/10 text-primary-theme h-fit rounded-xl">
                 <Smartphone className="w-6 h-6" />
               </div>
               <div className="space-y-2">
                 <h4 className="font-black uppercase text-sm">Instagram</h4>
-                <p className="text-sm text-text-secondary">Exatamente <strong>3 parágrafos</strong>. A <strong>Ideia-Força</strong> deve ser integrada obrigatoriamente no <strong>primeiro parágrafo</strong>. Tom técnico com emojis sóbrios. <strong>Geração de 3 opções de Títulos Institucionais.</strong></p>
+                <p className="text-sm text-text-secondary">Exatamente <strong>3 parágrafos</strong>. A <strong>Paráfrase da Ideia-Força</strong> deve ser integrada em <strong>negrito</strong> no <strong>primeiro parágrafo</strong>. Tom técnico com emojis sóbrios. <strong>Geração de 3 opções de Títulos Institucionais.</strong></p>
               </div>
             </div>
 
