@@ -67,13 +67,21 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
       return response;
     } catch (error: any) {
       lastError = error;
-      const errorStr = JSON.stringify(error);
+      const errorMsg = error?.message || "";
+      const errorStatus = error?.status || 0;
       
-      if (errorStr.includes('429') || errorStr.includes('503') || errorStr.includes('RESOURCE_EXHAUSTED')) {
-        console.warn(`Modelo ${modelToTry} falhou. Tentando fallback...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
+        console.warn(`Modelo ${modelToTry} atingiu cota. Tentando fallback...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
         continue; 
       }
+      
+      if (errorStatus === 503 || errorMsg.includes('503')) {
+        console.warn(`Modelo ${modelToTry} indisponível (503). Tentando fallback...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+      
       throw error;
     }
   }
@@ -116,8 +124,12 @@ export async function generateOperationalImage(params: GenerationParams): Promis
       }
     }
     return undefined;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro na geração de imagem:", error);
+    const errorMsg = error?.message || "";
+    if (error?.status === 429 || errorMsg.includes('429') || errorMsg.includes('quota')) {
+      throw new Error("COTA EXCEDIDA (Imagens): O limite de geração de imagens foi atingido. Tente novamente em alguns instantes.");
+    }
     throw error;
   }
 }
@@ -245,16 +257,17 @@ export async function generateOperationalContent(params: GenerationParams): Prom
     return { ...content, sourceLinks: groundingLinks };
   } catch (error: any) {
     console.error("Erro na geração de conteúdo:", error);
-    const errorStr = typeof error === 'string' ? error : JSON.stringify(error);
+    const errorMsg = error?.message || "";
+    const errorStatus = error?.status || 0;
     
-    if (errorStr.includes('429') || errorStr.includes('RESOURCE_EXHAUSTED') || errorStr.includes('quota')) {
-      throw new Error("COTA EXCEDIDA: O motor atingiu o limite de envios do plano gratuito.");
+    if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
+      throw new Error("LIMITE DE COTA: O motor do Gemini atingiu o limite de envios do plano gratuito. Por favor, aguarde de 1 a 2 minutos para que a cota seja redefinida.");
     }
 
-    if (errorStr.includes('503')) {
-      throw new Error("SISTEMA SOBRECARREGADO: O serviço do Google está com alta demanda.");
+    if (errorStatus === 503 || errorMsg.includes('503')) {
+      throw new Error("SISTEMA INSTÁVEL: O serviço do Google está temporariamente sobrecarregado (503).");
     }
     
-    throw new Error("Falha na comunicação com a IA: " + (error?.message || "Erro desconhecido"));
+    throw new Error("Falha na IA: " + (errorMsg || "Erro desconhecido de comunicação"));
   }
 }
