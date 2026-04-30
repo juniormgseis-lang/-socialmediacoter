@@ -50,16 +50,24 @@ const App: React.FC = () => {
   const [showTomVoz, setShowTomVoz] = useState(false);
 
   useEffect(() => {
-    const authStatus = sessionStorage.getItem('coter_auth');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
+    try {
+      const authStatus = sessionStorage.getItem('coter_auth');
+      if (authStatus === 'true') {
+        setIsAuthenticated(true);
+      }
+    } catch {
+      // Se cookies/sessionStorage estiverem bloqueados, o app ainda funciona mas sem persistência de login
     }
   }, []);
 
   const handleLogin = (password: string) => {
     if (password === '@coter') {
       setIsAuthenticated(true);
-      sessionStorage.setItem('coter_auth', 'true');
+      try {
+        sessionStorage.setItem('coter_auth', 'true');
+      } catch (e) {
+        console.warn('sessionStorage indisponível:', e);
+      }
       showStatus('success', 'Acesso autorizado. Missão iniciada.');
     }
   };
@@ -306,6 +314,7 @@ const App: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                   onClick={() => setShowManual(true)}
+                  aria-label="Abrir manual de doutrina"
                   className="mt-6 px-6 py-3 bg-white/5 hover:bg-white/15 rounded-2xl border border-white/10 hover:border-white/30 transition-all flex items-center gap-4 group backdrop-blur-[2px]"
                 >
                   <div className="p-2 bg-emerald-500 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:scale-110 transition-transform">
@@ -334,6 +343,7 @@ const App: React.FC = () => {
                 <span className="flex items-center gap-2"><Activity className="w-4 h-4 text-secondary-theme" /> Missão / Evento Operacional</span>
                 <button 
                   onClick={() => setShowFiquePorDentro(true)}
+                  aria-label="Informações sobre o tópico"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="Fique por Dentro!"
                 >
@@ -352,6 +362,7 @@ const App: React.FC = () => {
                   <span className="flex items-center gap-2"><Icons.MessageSquare className="w-3 h-3 text-secondary-theme" /> Tom de Voz Estratégico</span>
                   <button 
                     onClick={() => setShowTomVoz(true)}
+                    aria-label="Ajuda sobre Tom de Voz"
                     className="p-1 hover:bg-amber-400/10 rounded-full transition-all text-amber-500"
                     title="Ajuda sobre Tom de Voz"
                   >
@@ -384,6 +395,7 @@ const App: React.FC = () => {
                   </div>
                   <button 
                     onClick={() => setShowFiqueSabendo(true)}
+                    aria-label="Ajuda sobre referências técnicas"
                     className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                     title="Fique Sabendo!"
                   >
@@ -469,6 +481,7 @@ const App: React.FC = () => {
                 <span className="flex items-center gap-2"><Icons.Zap className="w-4 h-4 text-secondary-theme" /> LINHAS DE ESFORÇO</span>
                 <button 
                   onClick={() => setShowLinhasInfo(true)}
+                  aria-label="Informações sobre Linhas de Esforço"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="O que é?"
                 >
@@ -521,6 +534,7 @@ const App: React.FC = () => {
                 <span className="flex items-center gap-2"><LayoutGrid className="w-4 h-4 text-secondary-theme" /> Formas de Entrega</span>
                 <button 
                   onClick={() => setShowFormasInfo(true)}
+                  aria-label="Ajuda sobre Formas de Entrega"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="Ajuda nas Formas de Entrega"
                 >
@@ -782,7 +796,9 @@ const App: React.FC = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
-            sessionStorage.removeItem('coter_auth');
+            try {
+              sessionStorage.removeItem('coter_auth');
+            } catch {}
             setIsAuthenticated(false);
             showStatus('info', 'Sessão encerrada.');
           }}

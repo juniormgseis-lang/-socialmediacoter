@@ -19,7 +19,7 @@ interface DeliverableCardProps {
   generationError?: string;
 }
 
-export const DeliverableCard: React.FC<DeliverableCardProps> = ({ 
+export const DeliverableCard: React.FC<DeliverableCardProps> = React.memo(({ 
   title, 
   titleGenerated, 
   titleOptions,
@@ -39,6 +39,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
     const link = document.createElement('a');
     link.href = imageUrl;
     link.download = `imagem_coter_${new Date().getTime()}.jpg`;
+    link.ariaLabel = "Baixar imagem";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -166,6 +167,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
           </div>
           <button 
             onClick={handleDownloadImage}
+            aria-label="Baixar imagem gerada"
             className="absolute bottom-4 right-4 bg-surface/90 hover:bg-surface text-primary-theme p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0"
             title="Baixar Imagem JPG"
           >
@@ -218,6 +220,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
               <div className="bg-background/20 rounded-xl p-4 border border-border/50">
                 <button 
                   onClick={() => setShowOptions(!showOptions)}
+                  aria-label={showOptions ? "Ocultar opções de títulos" : "Ver outras opções de títulos"}
                   className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
                 >
                   <span>Ver outras opções de títulos</span>
@@ -263,6 +266,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
         <div className="flex items-center gap-4">
           <button 
             onClick={handleDownloadPDF}
+            aria-label="Baixar conteúdo em PDF"
             className="text-xs font-bold text-secondary-theme hover:opacity-80 flex items-center gap-1.5 transition-colors"
           >
             <FileDown className="w-4 h-4" />
@@ -272,6 +276,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
           {imageUrl && (
             <button 
               onClick={handleDownloadImage}
+              aria-label="Baixar imagem em JPG"
               className="text-xs font-bold text-primary-theme hover:opacity-80 flex items-center gap-1.5 transition-colors"
             >
               <Download className="w-4 h-4" />
@@ -282,6 +287,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
 
         <button 
           onClick={handleCopy}
+          aria-label="Copiar conteúdo"
           className="text-xs font-bold text-text-secondary hover:text-text-primary flex items-center gap-1 transition-colors ml-auto"
         >
           {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -290,4 +296,4 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
       </div>
     </motion.div>
   );
-};
+});

@@ -2,8 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_FORCA_MAP, LinhaDeEsforco } from "../types";
 
-const TEXT_MODEL_FLASH = 'gemini-1.5-flash'; 
-const IMAGE_MODEL_GEMINI = 'gemini-2.0-flash-exp';
+const TEXT_MODEL_FLASH = 'gemini-flash-latest'; 
+const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
 // Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY (injetado pelo sistema)
 const GEMINI_KEY = (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : '') || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
@@ -18,12 +18,13 @@ const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
  * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
  */
 async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-3-flash-preview', 'gemini-flash-latest'];
+  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-1.5-flash', 'gemini-3-flash-preview'];
   
   let lastError: any = null;
 
   for (const modelToTry of modelsToTry) {
     try {
+      console.log(`Tentando requisição com o modelo: ${modelToTry}...`);
       const response = await genAI.models.generateContent({
         model: modelToTry,
         contents,
@@ -68,21 +69,29 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
     } catch (error: any) {
       lastError = error;
       const errorMsg = error?.message || "";
-      const errorStatus = error?.status || 0;
+      const errorStatus = error?.status || error?.error?.code || 0;
       
+      console.error(`Erro no modelo ${modelToTry}:`, { status: errorStatus, message: errorMsg });
+
       if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
-        console.warn(`Modelo ${modelToTry} atingiu cota. Tentando fallback...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.warn(`Modelo ${modelToTry} atingiu cota. Tentando modelo alternativo...`);
+        // Delay menor para fallback, pois já estamos trocando de modelo
+        await new Promise(resolve => setTimeout(resolve, 500));
         continue; 
       }
       
-      if (errorStatus === 503 || errorMsg.includes('503')) {
+      if (errorStatus === 503 || errorMsg.includes('503') || errorMsg.includes('unavailable')) {
         console.warn(`Modelo ${modelToTry} indisponível (503). Tentando fallback...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
         continue;
       }
       
-      throw error;
+      // Se for um erro crítico de segurança ou formato (400), não adianta tentar outro modelo igual
+      if (errorStatus === 400 || errorMsg.includes('INVALID_ARGUMENT')) {
+        throw error;
+      }
+
+      continue;
     }
   }
   throw lastError;

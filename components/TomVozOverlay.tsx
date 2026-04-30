@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Lightbulb, Binary, Heart, Target, Zap } from 'lucide-react';
+import { X, Lightbulb, Binary, Smile, Target, Zap } from 'lucide-react';
 
 interface TomVozOverlayProps {
   isOpen: boolean;
@@ -78,7 +78,7 @@ export const TomVozOverlay: React.FC<TomVozOverlayProps> = ({ isOpen, onClose })
                     <div className="absolute top-0 left-0 w-1 h-full bg-slate-300 group-hover:bg-pink-500 transition-colors"></div>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 bg-pink-100 rounded-lg">
-                        <Heart className="w-5 h-5 text-pink-700" />
+                        <Smile className="w-5 h-5 text-pink-700" />
                       </div>
                       <h4 className="text-lg font-black text-slate-800 uppercase italic">Emotivo</h4>
                     </div>

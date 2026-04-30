@@ -43,6 +43,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
         {onOpenInfo && (
           <button 
             onClick={onOpenInfo}
+            aria-label="Ajuda sobre criação visual"
             className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-500 animate-pulse"
             title="Saiba usar"
           >
@@ -59,6 +60,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setGenerateImageEnabled(!generateImageEnabled)}
+              aria-label={generateImageEnabled ? "Desativar geração de imagem" : "Ativar geração de imagem"}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ring-2 ring-offset-2 ${generateImageEnabled ? 'bg-secondary-theme ring-secondary-theme' : 'bg-border ring-border'}`}
             >
               <span
@@ -107,6 +109,7 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
               <img src={img.preview} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               <button 
                 onClick={() => handleRemoveImage(img.id)} 
+                aria-label="Remover imagem de referência"
                 className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 className="w-3 h-3" />
