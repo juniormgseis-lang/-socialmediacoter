@@ -111,7 +111,7 @@ export const ManualOverlay: React.FC<ManualOverlayProps> = ({ onClose }) => {
               </div>
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-xl font-black uppercase italic tracking-tighter mb-2 text-info-accent">Inteligência Técnica (PDF)</h4>
+                  <h4 className="text-xl font-black uppercase italic tracking-tighter mb-2 text-info-accent">Referência Técnica (PDF)</h4>
                   <p className="text-sm text-text-primary leading-relaxed font-bold">
                     O que deve ser inserido é o <span className="text-info-accent">documento base (contexto)</span> que servirá de fonte primária para a inteligência artificial.
                   </p>

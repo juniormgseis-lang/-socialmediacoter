@@ -10,6 +10,7 @@ export enum ContentTone {
 }
 
 export enum LinhaDeEsforco {
+  DEFINIR_POR_IA = 'Definição Automática',
   OPERACIONALIDADE = 'Operacionalidade',
   INTEGRACAO_SOCIEDADE = 'Integração com a Sociedade',
   DIPLOMACIA_MILITAR = 'Diplomacia Militar',
@@ -21,6 +22,7 @@ export enum LinhaDeEsforco {
 }
 
 export const IDEIAS_FORCA_MAP: Record<LinhaDeEsforco, string[]> = {
+  [LinhaDeEsforco.DEFINIR_POR_IA]: ["Seleção automática pela IA (Grounding Doutrinário)"],
   [LinhaDeEsforco.OPERACIONALIDADE]: [
     "a. Ressaltar capacidades a fim de desestimular a criação de outros agentes ou forças de segurança",
     "b. Fomentar o interesse pela Defesa Nacional como assunto imprescindível à Nação",
@@ -165,6 +167,8 @@ export interface SocialMediaContent {
   imageUrl?: string;
   visualIdentitySuggestion?: string;
   imageGenerationError?: string;
+  selectedLinha?: string;
+  selectedIdeia?: string;
 }
 
 export interface ReferenceImage {
@@ -176,6 +180,12 @@ export interface ReferenceImage {
 
 export enum AIProvider {
   GEMINI_FLASH = 'Gemini 1.5 Flash (Foco em Velocidade)',
+}
+
+export enum DeliveryFormat {
+  INSTAGRAM = 'Instagram',
+  WHATSAPP = 'WhatsApp',
+  ARTICLE = 'Artigo',
 }
 
 export enum Theme {
@@ -193,4 +203,5 @@ export interface GenerationParams {
   images: ReferenceImage[];
   customSource?: string;
   provider: AIProvider;
+  formats: DeliveryFormat[];
 }

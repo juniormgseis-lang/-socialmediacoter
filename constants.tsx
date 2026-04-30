@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-import { Shield, Camera, Send, FileText, AlertTriangle, BookOpen } from 'lucide-react';
+import { Shield, Camera, Send, FileText, AlertTriangle, BookOpen, Zap, Lightbulb, MessageSquare } from 'lucide-react';
 
 export const COLORS = {
   ARMY_GREEN: '#4B5320',
@@ -21,4 +21,7 @@ export const Icons = {
   FileText: FileText,
   AlertTriangle: AlertTriangle,
   BookOpen: BookOpen,
+  Zap: Zap,
+  Lightbulb: Lightbulb,
+  MessageSquare: MessageSquare,
 };

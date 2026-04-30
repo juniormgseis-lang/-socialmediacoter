@@ -1,24 +1,24 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider } from "../types";
+import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_FORCA_MAP, LinhaDeEsforco } from "../types";
 
 const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
-// Tenta obter a chave de múltiplas fontes para garantir o funcionamento
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '') || '';
+// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY
+const GEMINI_KEY = process.env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '') || '';
 
 if (!GEMINI_KEY) {
-  console.error("ERRO: Chave do Gemini não detectada. O sistema não conseguirá gerar conteúdo.");
+  console.warn("Chave do Gemini não detectada via process.env. O sistema pode falhar.");
 }
 
-const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY || '' });
+const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
 
 /**
  * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
  */
 async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-1.5-flash', 'gemini-3-flash-preview'];
+  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-flash-latest'];
   
   let lastError: any = null;
 
@@ -30,7 +30,6 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
         config: {
           systemInstruction,
           tools: includeTools ? [{ googleSearch: {} }] : [],
-          toolConfig: { includeServerSideToolInvocations: true },
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -51,13 +50,16 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
               impactMetrics: { type: Type.STRING },
               sources: { type: Type.ARRAY, items: { type: Type.STRING } },
               conflictWarnings: { type: Type.STRING },
-              visualIdentitySuggestion: { type: Type.STRING }
+              visualIdentitySuggestion: { type: Type.STRING },
+              selectedLinha: { type: Type.STRING },
+              selectedIdeia: { type: Type.STRING }
             },
             required: [
               "instagram", "instagramTitle", "instagramTitleOptions", "instagramTitleJustification",
               "whatsapp", "whatsappTitle", "whatsappTitleOptions", "whatsappTitleJustification",
               "article", "articleTitle", "articleTitleOptions", "articleTitleJustification",
-              "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion"
+              "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion",
+              "selectedLinha", "selectedIdeia"
             ]
           }
         }
@@ -122,6 +124,18 @@ export async function generateOperationalImage(params: GenerationParams): Promis
 
 export async function generateOperationalContent(params: GenerationParams): Promise<SocialMediaContent> {
   try {
+    const isAiDefined = params.linha === LinhaDeEsforco.DEFINIR_POR_IA;
+    
+    const doctrinalContext = isAiDefined 
+      ? `MODO AUTOMÁTICO - DEFINIÇÃO AUTOMÁTICA:
+         Analise o tópico "${params.topic}" e escolha a Linha de Esforço e a Ideia-Força mais adequadas da lista oficial do COTER abaixo:
+         ${Object.entries(IDEIAS_FORCA_MAP)
+           .filter(([key]) => key !== LinhaDeEsforco.DEFINIR_POR_IA)
+           .map(([key, ideas]) => `LINHA: ${key}\nIDEIAS:\n- ${ideas.join('\n- ')}`)
+           .join('\n\n')}
+         Você deve declarar qual foi sua escolha nas propriedades "selectedLinha" e "selectedIdeia" do JSON de retorno. Toda a redação deve ser baseada nessa escolha automática.`
+      : "";
+
     const customDoctrineContext = params.customSource 
       ? `FONTE TÉCNICA PRIMÁRIA (O PDF ANEXADO): \n"""\n${params.customSource}\n"""\n
          DIRETRIZ: O PDF é sua base de verdade absoluta. O Grounding deve ser usado para complementar, mas o PDF tem precedência.` 
@@ -131,6 +145,9 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       IDENTIDADE: Você é o Tenente-Coronel Luiz Alves, Chefe da Comunicação Estratégica Operacional do COTER.
       MISSÃO: Produzir conteúdo estratégico alinhado às Diretrizes do Comando.
       REQUISITOS DE LINGUAGEM: Norma culta da língua portuguesa, tom técnico e autoritário.
+
+      ${doctrinalContext}
+
       FORMATO OBRIGATÓRIO: Retorne APENAS um objeto JSON válido.
       
       ESTRUTURA JSON:
@@ -151,7 +168,9 @@ export async function generateOperationalContent(params: GenerationParams): Prom
         "impactMetrics": "texto",
         "sources": ["fonte1", "fonte2"],
         "conflictWarnings": "texto ou vazio",
-        "visualIdentitySuggestion": "descrição detalhada da imagem sugerida para este conteúdo"
+        "visualIdentitySuggestion": "descrição detalhada da imagem sugerida para este conteúdo",
+        "selectedLinha": "Nome da linha de esforço utilizada (seja fornecida ou escolhida pela IA)",
+        "selectedIdeia": "Texto da ideia-força utilizada (seja fornecida ou escolhida pela IA)"
       }
 
       INSTRUÇÕES PARA GERAÇÃO DOS TÍTULOS (HEADLINES):
@@ -162,8 +181,8 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       1. Título claro, direto e objetivo.
       2. Deve conter VERBO DE AÇÃO (ex: realiza, coordena, participa, reforça, demonstra).
       3. O SUJEITO INSTITUCIONAL deve estar explícito (ex: COTER, Exército Brasileiro ou Força Terrestre).
-      4. Deve refletir a Ideia-Força: "${params.ideiaForca}".
-      5. Deve estar alinhado à Linha de Esforço: "${params.linha}".
+      4. Deve refletir a Ideia-Força: ${isAiDefined ? "a selecionada por você" : `"${params.ideiaForca}"`}.
+      5. Deve estar alinhado à Linha de Esforço: ${isAiDefined ? "a selecionada por você" : `"${params.linha}"`}.
       6. Sobriedade institucional (sem adjetivações excessivas).
       7. Extensão entre 50 e 70 caracteres.
       8. Evite redundâncias.
@@ -171,13 +190,16 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       REQUISITOS GERAIS PARA TODOS OS TEXTOS:
       1. Os parágrafos devem ser OBRIGATORIAMENTE separados por exatamente DUAS quebras de linha (\n\n) para garantir o espaçamento visual.
       2. Mantenha o tom institucional e técnico (Persona TC Luiz Alves).
-      3. **REGRA CRÍTICA DE REDAÇÃO (IDEIA-FORÇA):** A Ideia-Força "${params.ideiaForca}" NÃO deve ser reproduzida literalmente no texto final. Ela deve ser interpretada, parafraseada obrigatoriamente e adaptada ao contexto de forma natural, integrada ao texto (preferencialmente no início). É PROIBIDO copiar total ou parcialmente a ideia-força original. O trecho que representa essa ideia-força parafraseada DEVE permanecer em **negrito**.
+      3. **REGRA CRÍTICA DE REDAÇÃO (IDEIA-FORÇA):** A Ideia-Força ${isAiDefined ? "selecionada por você" : `"${params.ideiaForca}"`} NÃO deve ser reproduzida literalmente no texto final. Ela deve ser interpretada, parafraseada obrigatoriamente e adaptada ao contexto de forma natural, integrada ao texto (preferencialmente no início). É PROIBIDO copiar total ou parcialmente a ideia-força original. O trecho que representa essa ideia-força parafraseada DEVE permanecer em **negrito**.
 
       SUGESTÃO DE IDENTIDADE VISUAL:
       Sempre apresente uma sugestão detalhada de qual imagem ou vídeo deveria acompanhar esta postagem caso não haja uma imagem gerada. Descreva o cenário, os elementos militares, a iluminação e o sentimento que a imagem deve transmitir.
 
       REQUISITOS ESPECÍFICOS POR FORMATO:
-      1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. A paráfrase da Ideia-Força "${params.ideiaForca}" DEVE ser obrigatoriamente integrada ao texto logo no PRIMEIRO parágrafo e estar em **negrito**. Use emojis de forma sóbria.
+      FOQUE A GERAÇÃO APENAS NESTES FORMATOS: ${params.formats.join(', ')}. 
+      Os formatos não incluídos nesta lista devem ter seus valores retornados como string vazia ("") no JSON.
+
+      1. INSTAGRAM: O texto deve ter OBRIGATORIAMENTE exatamente 3 parágrafos distintos. A paráfrase da Ideia-Força ${isAiDefined ? "selecionada" : `"${params.ideiaForca}"`} DEVE ser obrigatoriamente integrada ao texto logo no PRIMEIRO parágrafo e estar em **negrito**. Use emojis de forma sóbria.
       2. WHATSAPP: Texto ágil, sem limitação de parágrafos. A Ideia-Força parafraseada deve estar em **negrito**.
       3. ARTIGO TÉCNICO-DOUTRINÁRIO: Produza um conteúdo denso e detalhado, com quantos parágrafos forem necessários para aprofundar o tema doutrinariamente. A Ideia-Força parafraseada deve aparecer em **negrito** onde for introduzida.
 
@@ -199,7 +221,16 @@ export async function generateOperationalContent(params: GenerationParams): Prom
 
     const response = await callGeminiWithFallback(contents, systemInstruction, !isFlash);
 
-    const content = JSON.parse(response.text || '{}') as SocialMediaContent;
+    const rawText = response.text || '{}';
+    let jsonContent = rawText;
+    
+    // Tenta extrair JSON de blocos de código se existirem
+    const jsonMatch = rawText.match(/```json\n([\s\S]*?)\n```/) || rawText.match(/```([\s\S]*?)```/);
+    if (jsonMatch && jsonMatch[1]) {
+      jsonContent = jsonMatch[1];
+    }
+    
+    const content = JSON.parse(jsonContent) as SocialMediaContent;
     const groundingLinks = response.candidates?.[0]?.groundingMetadata?.groundingChunks
       ?.filter((chunk: any) => chunk.web)
       ?.map((chunk: any) => ({ title: chunk.web?.title || 'Fonte', uri: chunk.web?.uri || '' })) || [];

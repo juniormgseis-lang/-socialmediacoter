@@ -14,7 +14,7 @@ export const ThemeSwitcher: React.FC = () => {
   ];
 
   return (
-    <div className="bg-surface/50 backdrop-blur-md p-1.5 rounded-2xl border border-border shadow-xl w-full max-w-2xl mx-auto flex">
+    <div className="grid grid-cols-3 gap-3 w-full max-w-2xl mx-auto mb-0">
       {themes.map((t) => {
         const isActive = theme === t.id;
         const Icon = t.icon;
@@ -23,23 +23,30 @@ export const ThemeSwitcher: React.FC = () => {
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
-            className={`relative flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-[10px] md:text-sm font-black uppercase tracking-widest transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all group gap-3 relative overflow-hidden ${
               isActive 
-                ? 'text-white' 
-                : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                ? 'bg-secondary-theme/10 border-secondary-theme text-text-primary' 
+                : 'bg-surface/50 border-border text-text-secondary hover:border-secondary-theme/50 md:bg-surface/30'
             }`}
             id={`theme-btn-${t.id}`}
           >
             {isActive && (
               <motion.div
-                layoutId="active-theme"
-                className="absolute inset-1 bg-secondary-theme rounded-lg shadow-lg border border-white/10"
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-              />
+                layoutId="active-theme-indicator"
+                className="absolute top-2 right-2"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+              >
+                <Check className="w-4 h-4 text-secondary-theme" />
+              </motion.div>
             )}
-            <span className="relative z-10 flex items-center gap-2">
-              <Icon className={`w-4 h-4 md:w-5 md:h-5 ${isActive ? 'text-primary-contrast' : t.color}`} />
-              <span className={isActive ? 'text-primary-contrast' : ''}>{t.label}</span>
+            
+            <div className={`p-2.5 rounded-xl transition-all duration-300 ${isActive ? 'bg-secondary-theme text-white shadow-lg shadow-secondary-theme/20' : 'bg-background/50 group-hover:bg-secondary-theme/10'}`}>
+              <Icon className={`w-5 h-5 md:w-6 md:h-6 ${isActive ? 'text-primary-contrast' : t.color}`} />
+            </div>
+            
+            <span className={`text-[10px] md:text-[11px] font-black uppercase tracking-widest text-center ${isActive ? 'text-secondary-theme' : ''}`}>
+              {t.label}
             </span>
           </button>
         );

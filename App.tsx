@@ -5,12 +5,18 @@ import { DeliverableCard } from './components/DeliverableCard';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 import { LoginOverlay } from './components/LoginOverlay';
 import { ManualOverlay } from './components/ManualOverlay';
+import { FiqueSabendoOverlay } from './components/FiqueSabendoOverlay';
+import { LinhasInfoOverlay } from './components/LinhasInfoOverlay';
+import { FiquePorDentroOverlay } from './components/FiquePorDentroOverlay';
+import { FormasEntregaOverlay } from './components/FormasEntregaOverlay';
+import { ImageGenInfoOverlay } from './components/ImageGenInfoOverlay';
+import { TomVozOverlay } from './components/TomVozOverlay';
 import { Icons, COTER_LOGO_URL } from './constants';
-import { VisualStyle, ContentTone, ReferenceImage, SocialMediaContent, LinhaDeEsforco, IDEIAS_FORCA_MAP, AIProvider } from './types';
+import { VisualStyle, ContentTone, ReferenceImage, SocialMediaContent, LinhaDeEsforco, IDEIAS_FORCA_MAP, AIProvider, DeliveryFormat } from './types';
 import { generateOperationalContent, generateOperationalImage } from './services/aiService';
 import * as pdfjsLib from 'pdfjs-dist';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trash2, ShieldAlert, Activity, Info, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Trash2, ShieldAlert, Activity, Info, CheckCircle2, AlertTriangle, LayoutGrid, CheckSquare, Square } from 'lucide-react';
 
 // Configuração do worker do PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://esm.sh/pdfjs-dist@4.10.38/build/pdf.worker.mjs`;
@@ -19,12 +25,14 @@ const App: React.FC = () => {
   const [topic, setTopic] = useState('');
   const [style, setStyle] = useState<VisualStyle>(VisualStyle.REAL_PHOTOS);
   const [tone, setTone] = useState<ContentTone>(ContentTone.TECHNICAL);
-  const [linha, setLinha] = useState<LinhaDeEsforco>(LinhaDeEsforco.OPERACIONALIDADE);
+  const [linha, setLinha] = useState<LinhaDeEsforco>(LinhaDeEsforco.DEFINIR_POR_IA);
   const [aiProvider, setAiProvider] = useState<AIProvider>(AIProvider.GEMINI_FLASH);
   const [ideiaForca, setIdeiaForca] = useState<string>('');
   const [customSource, setCustomSource] = useState<string>('');
+  const [pdfContent, setPdfContent] = useState<string>('');
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [images, setImages] = useState<ReferenceImage[]>([]);
+  const [formats, setFormats] = useState<DeliveryFormat[]>([DeliveryFormat.INSTAGRAM, DeliveryFormat.WHATSAPP, DeliveryFormat.ARTICLE]);
   const [generateImageEnabled, setGenerateImageEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [processingPdf, setProcessingPdf] = useState(false);
@@ -33,6 +41,12 @@ const App: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info', text: string } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showManual, setShowManual] = useState(false);
+  const [showFiqueSabendo, setShowFiqueSabendo] = useState(false);
+  const [showLinhasInfo, setShowLinhasInfo] = useState(false);
+  const [showFiquePorDentro, setShowFiquePorDentro] = useState(false);
+  const [showFormasInfo, setShowFormasInfo] = useState(false);
+  const [showImageInfo, setShowImageInfo] = useState(false);
+  const [showTomVoz, setShowTomVoz] = useState(false);
 
   useEffect(() => {
     const authStatus = sessionStorage.getItem('coter_auth');
@@ -105,7 +119,7 @@ const App: React.FC = () => {
         fullText += pageText + '\n';
       }
 
-      setCustomSource(fullText);
+      setPdfContent(fullText);
       showStatus('success', 'Doutrina indexada com sucesso.');
     } catch (error) {
       console.error('Erro ao processar PDF:', error);
@@ -120,9 +134,19 @@ const App: React.FC = () => {
     setImages(prev => prev.filter(img => img.id !== id));
   };
 
+  const toggleFormat = (f: DeliveryFormat) => {
+    setFormats(prev => 
+      prev.includes(f) ? prev.filter(item => item !== f) : [...prev, f]
+    );
+  };
+
   const handleGenerate = async () => {
     if (!topic) {
       showStatus('error', 'Por favor, defina o tópico da missão.');
+      return;
+    }
+    if (formats.length === 0) {
+      showStatus('error', 'Por favor, selecione ao menos um formato de entrega.');
       return;
     }
     setLoading(true);
@@ -136,8 +160,9 @@ const App: React.FC = () => {
         linha, 
         ideiaForca, 
         images, 
-        customSource: customSource.trim() || undefined,
-        provider: aiProvider
+        customSource: (pdfContent + "\n\n" + customSource).trim() || undefined,
+        provider: aiProvider,
+        formats
       };
       const textContent = await generateOperationalContent(params);
       let generatedImageUrl = undefined;
@@ -178,6 +203,42 @@ const App: React.FC = () => {
       <AnimatePresence>
         {showManual && (
           <ManualOverlay onClose={() => setShowManual(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showFiqueSabendo && (
+          <FiqueSabendoOverlay isOpen={showFiqueSabendo} onClose={() => setShowFiqueSabendo(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showLinhasInfo && (
+          <LinhasInfoOverlay isOpen={showLinhasInfo} onClose={() => setShowLinhasInfo(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showFiquePorDentro && (
+          <FiquePorDentroOverlay isOpen={showFiquePorDentro} onClose={() => setShowFiquePorDentro(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showFormasInfo && (
+          <FormasEntregaOverlay isOpen={showFormasInfo} onClose={() => setShowFormasInfo(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showImageInfo && (
+          <ImageGenInfoOverlay isOpen={showImageInfo} onClose={() => setShowImageInfo(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showTomVoz && (
+          <TomVozOverlay isOpen={showTomVoz} onClose={() => setShowTomVoz(false)} />
         )}
       </AnimatePresence>
 
@@ -263,27 +324,72 @@ const App: React.FC = () => {
         <ThemeSwitcher />
       </div>
 
-      <main className="max-w-7xl mx-auto py-12 px-4">
+      <main className="max-w-7xl mx-auto pt-10 pb-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5 space-y-10">
-            <section className="bg-surface p-10 rounded-3xl shadow-2xl border border-border transition-all hover:shadow-emerald-900/5">
-              <label className="block text-[12px] font-black text-text-secondary uppercase mb-5 tracking-[0.2em] flex items-center gap-2">
-                <Activity className="w-4 h-4 text-secondary-theme" /> Missão / Evento Operacional
+            <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-secondary-theme border border-border transition-all hover:shadow-emerald-900/5">
+              <label className="block text-[12px] font-black text-text-secondary uppercase mb-5 tracking-[0.2em] flex justify-between items-center">
+                <span className="flex items-center gap-2"><Activity className="w-4 h-4 text-secondary-theme" /> Missão / Evento Operacional</span>
+                <button 
+                  onClick={() => setShowFiquePorDentro(true)}
+                  className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
+                  title="Fique por Dentro!"
+                >
+                  <Icons.Lightbulb className="w-5 h-5 fill-amber-400/20" />
+                </button>
               </label>
               <textarea
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="Ex: Operação Ágata - Reforço na Faixa de Fronteira Norte"
-                className="w-full h-40 p-6 bg-background/50 border-2 border-border rounded-2xl focus:border-secondary-theme focus:ring-8 focus:ring-secondary-theme/5 outline-none text-lg font-semibold text-text-primary transition-all placeholder:text-text-secondary placeholder:opacity-60 shadow-inner resize-none"
+                className="w-full h-32 p-6 bg-background/50 border-2 border-border rounded-2xl focus:border-secondary-theme focus:ring-8 focus:ring-secondary-theme/5 outline-none text-lg font-semibold text-text-primary transition-all placeholder:text-text-secondary placeholder:opacity-60 shadow-inner resize-none mb-6"
               />
+
+              <div className="space-y-4 pt-4 border-t border-border/50">
+                <label className="block text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] flex justify-between items-center gap-2">
+                  <span className="flex items-center gap-2"><Icons.MessageSquare className="w-3 h-3 text-secondary-theme" /> Tom de Voz Estratégico</span>
+                  <button 
+                    onClick={() => setShowTomVoz(true)}
+                    className="p-1 hover:bg-amber-400/10 rounded-full transition-all text-amber-500"
+                    title="Ajuda sobre Tom de Voz"
+                  >
+                    <Icons.Lightbulb className="w-4 h-4" />
+                  </button>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.values(ContentTone).map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => setTone(v)}
+                      className={`py-3 px-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-2 ${
+                        tone === v 
+                          ? 'bg-secondary-theme text-white border-secondary-theme shadow-lg scale-105' 
+                          : 'bg-background/40 text-text-secondary border-border hover:border-secondary-theme/30 hover:bg-secondary-theme/5'
+                      }`}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
-            <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-info-accent border border-border space-y-8">
-              <div className="relative">
-                <label className="block text-[12px] font-black text-info-accent uppercase mb-4 tracking-[0.2em] flex items-center gap-3">
-                  <Icons.FileText className="w-5 h-5" /> INTELIGÊNCIA TÉCNICA (PDF)
+            <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-info-accent border border-border">
+              <div className="relative space-y-6">
+                <label className="block text-[12px] font-black text-info-accent uppercase mb-4 tracking-[0.2em] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Icons.FileText className="w-5 h-5" /> REFERÊNCIA TÉCNICA (PDF OU TEXTO)
+                  </div>
+                  <button 
+                    onClick={() => setShowFiqueSabendo(true)}
+                    className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
+                    title="Fique Sabendo!"
+                  >
+                    <Icons.Lightbulb className="w-5 h-5 fill-amber-400/20" />
+                  </button>
                 </label>
-                {attachedFileName ? (
+                
+                {attachedFileName && (
                   <motion.div 
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -298,77 +404,167 @@ const App: React.FC = () => {
                         <span className="text-base font-bold text-info-accent truncate block">{attachedFileName}</span>
                       </div>
                     </div>
-                    <button onClick={() => { setAttachedFileName(null); setCustomSource(''); }} className="text-red-600 hover:bg-red-50 p-4 rounded-2xl transition-all">
+                    <button onClick={() => { setAttachedFileName(null); setPdfContent(''); }} className="text-red-600 hover:bg-red-50 p-4 rounded-2xl transition-all">
                       <Trash2 className="w-6 h-6" />
                     </button>
                   </motion.div>
-                ) : (
-                  <label className={`w-full p-10 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-all ${processingPdf ? 'bg-slate-100 border-slate-300 cursor-wait' : 'border-info-accent/30 hover:border-info-accent hover:bg-info-accent/5 hover:shadow-inner'}`}>
-                    {processingPdf ? (
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-10 h-10 border-4 border-info-accent border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-[12px] font-black text-info-accent animate-pulse uppercase tracking-[0.2em]">INDEXANDO DOUTRINA...</span>
-                      </div>
-                    ) : (
-                      <>
-                        <Icons.FileText className="w-12 h-12 text-info-accent/30 mb-4 group-hover:scale-110 transition-transform" />
-                        <span className="text-[12px] font-black text-info-accent uppercase tracking-[0.2em] text-center">ANEXAR DIRETRIZ ESTRATÉGICA (PDF)</span>
-                      </>
-                    )}
-                    <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} disabled={processingPdf} />
-                  </label>
                 )}
-              </div>
 
+                <div className="space-y-4">
+                  {!attachedFileName && (
+                    <label className={`w-full p-8 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-all ${processingPdf ? 'bg-slate-100 border-slate-300 cursor-wait' : 'border-info-accent/30 hover:border-info-accent hover:bg-info-accent/5 hover:shadow-inner'}`}>
+                      {processingPdf ? (
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="w-10 h-10 border-4 border-info-accent border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-[12px] font-black text-info-accent animate-pulse uppercase tracking-[0.2em]">INDEXANDO DOUTRINA...</span>
+                        </div>
+                      ) : (
+                        <>
+                          <Icons.FileText className="w-10 h-10 text-info-accent/30 mb-3 group-hover:scale-110 transition-transform" />
+                          <span className="text-[11px] font-black text-info-accent uppercase tracking-[0.2em] text-center">ANEXAR DIRETRIZ ESTRATÉGICA (PDF)</span>
+                        </>
+                      )}
+                      <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} disabled={processingPdf} />
+                    </label>
+                  )}
+
+                  {!attachedFileName && (
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div className="w-full border-t border-border"></div>
+                      </div>
+                      <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest text-text-secondary bg-surface px-4">
+                        OU COLE O TEXTO ABAIXO
+                      </div>
+                    </div>
+                  )}
+
+                  <textarea
+                    value={customSource}
+                    onChange={(e) => setCustomSource(e.target.value)}
+                    placeholder="Cole aqui modelos, diretrizes ou contextos adicionais..."
+                    className="w-full h-40 p-5 bg-background/50 border-2 border-border rounded-2xl focus:border-info-accent focus:ring-8 focus:ring-info-accent/5 outline-none text-sm font-medium text-text-primary transition-all placeholder:text-text-secondary placeholder:opacity-60 shadow-inner resize-none"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-amber-500 border border-border">
+              <label className="block text-[12px] font-black text-text-secondary uppercase mb-6 tracking-[0.2em] flex justify-between items-center">
+                <span className="flex items-center gap-2"><Icons.Zap className="w-4 h-4 text-secondary-theme" /> LINHAS DE ESFORÇO</span>
+                <button 
+                  onClick={() => setShowLinhasInfo(true)}
+                  className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
+                  title="O que é?"
+                >
+                  <Icons.Lightbulb className="w-5 h-5 fill-amber-400/20" />
+                </button>
+              </label>
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label className="block text-[12px] font-black text-text-secondary uppercase mb-3 tracking-[0.2em]">Linha de Esforço</label>
-                  <select value={linha} onChange={(e) => setLinha(e.target.value as LinhaDeEsforco)} className="w-full p-5 bg-background/50 border-2 border-border rounded-2xl text-base font-bold text-text-primary focus:border-secondary-theme outline-none transition-all cursor-pointer">
-                    {Object.values(LinhaDeEsforco).map(v => <option key={v} value={v}>{v}</option>)}
+                  <label className="block text-[12px] font-black text-text-secondary uppercase mb-3 tracking-[0.2em] flex justify-center items-center">
+                    {linha === LinhaDeEsforco.DEFINIR_POR_IA && (
+                      <span className="text-secondary-theme animate-pulse flex items-center gap-1 text-[10px]">
+                        <Activity className="w-3 h-3" /> INTELIGÊNCIA ATIVA
+                      </span>
+                    )}
+                  </label>
+                  <select 
+                    value={linha} 
+                    onChange={(e) => setLinha(e.target.value as LinhaDeEsforco)} 
+                    className={`w-full p-5 bg-background/50 border-2 rounded-2xl text-base font-bold outline-none transition-all cursor-pointer ${
+                      linha === LinhaDeEsforco.DEFINIR_POR_IA 
+                        ? 'border-secondary-theme text-secondary-theme' 
+                        : 'border-border text-text-primary focus:border-secondary-theme'
+                    }`}
+                  >
+                    {Object.values(LinhaDeEsforco).map(v => (
+                      <option key={v} value={v} className="bg-background text-text-primary">
+                        {v === LinhaDeEsforco.DEFINIR_POR_IA ? `🧠 ${v}` : v}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[12px] font-black text-text-secondary uppercase mb-3 tracking-[0.2em]">Ideia-Força Vinculada</label>
-                  <select value={ideiaForca} onChange={(e) => setIdeiaForca(e.target.value)} className="w-full p-5 bg-secondary-theme/10 border-2 border-secondary-theme/10 rounded-2xl text-base font-black text-text-primary focus:border-secondary-theme outline-none transition-all shadow-sm cursor-pointer">
+                <div className={linha === LinhaDeEsforco.DEFINIR_POR_IA ? 'opacity-50 pointer-events-none' : ''}>
+                  <label className="block text-[12px] font-black text-text-secondary uppercase mb-3 tracking-[0.2em]">
+                    {linha === LinhaDeEsforco.DEFINIR_POR_IA ? 'Ideia-Força (IA selecionará)' : 'Ideia-Força Vinculada'}
+                  </label>
+                  <select 
+                    value={ideiaForca} 
+                    onChange={(e) => setIdeiaForca(e.target.value)} 
+                    disabled={linha === LinhaDeEsforco.DEFINIR_POR_IA}
+                    className="w-full p-5 bg-secondary-theme/10 border-2 border-secondary-theme/10 rounded-2xl text-base font-black text-text-primary focus:border-secondary-theme outline-none transition-all shadow-sm cursor-pointer"
+                  >
                     {IDEIAS_FORCA_MAP[linha].map(v => <option key={v} value={v}>{v}</option>)}
                   </select>
                 </div>
               </div>
             </section>
 
+            <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-indigo-500 border border-border">
+              <label className="block text-[12px] font-black text-text-secondary uppercase mb-6 tracking-[0.2em] flex justify-between items-center">
+                <span className="flex items-center gap-2"><LayoutGrid className="w-4 h-4 text-secondary-theme" /> Formas de Entrega</span>
+                <button 
+                  onClick={() => setShowFormasInfo(true)}
+                  className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
+                  title="Ajuda nas Formas de Entrega"
+                >
+                  <Icons.Lightbulb className="w-5 h-5 fill-amber-400/20" />
+                </button>
+              </label>
+              
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <button
+                  onClick={() => setFormats([DeliveryFormat.INSTAGRAM, DeliveryFormat.WHATSAPP, DeliveryFormat.ARTICLE])}
+                  className="flex items-center justify-center gap-2 py-3 bg-secondary-theme/5 hover:bg-secondary-theme/10 text-secondary-theme text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-secondary-theme/20"
+                >
+                  <CheckSquare className="w-3 h-3" /> Selecionar Todas
+                </button>
+                <button
+                  onClick={() => setFormats([])}
+                  className="flex items-center justify-center gap-2 py-3 bg-red-500/5 hover:bg-red-500/10 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-red-500/20"
+                >
+                  <Square className="w-3 h-3" /> Limpar Seleção
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                {Object.values(DeliveryFormat).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => toggleFormat(f)}
+                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all group gap-3 ${
+                      formats.includes(f)
+                        ? 'bg-secondary-theme/10 border-secondary-theme text-text-primary'
+                        : 'bg-background/40 border-border text-text-secondary hover:border-secondary-theme/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center">
+                      {formats.includes(f) ? (
+                        <CheckSquare className="w-5 h-5 text-secondary-theme" />
+                      ) : (
+                        <Square className="w-5 h-5 opacity-40 group-hover:opacity-100" />
+                      )}
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-center">{f}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
             <ControlCenter 
               style={style} 
-              tone={tone} 
               setStyle={setStyle} 
-              setTone={setTone} 
               provider={aiProvider}
               setProvider={setAiProvider}
               generateImageEnabled={generateImageEnabled}
               setGenerateImageEnabled={setGenerateImageEnabled}
+              images={images}
+              handleImageUpload={handleImageUpload}
+              handleRemoveImage={removeImage}
+              onOpenInfo={() => setShowImageInfo(true)}
             />
 
-            <section className="bg-surface p-10 rounded-3xl shadow-2xl border border-border">
-              <label className="block text-[12px] font-black text-text-secondary uppercase mb-6 tracking-[0.2em] flex justify-between items-center">
-                <span className="flex items-center gap-2"><Icons.Camera className="w-4 h-4" /> INTELIGÊNCIA VISUAL</span>
-                <span className="text-secondary-theme bg-secondary-theme/10 px-4 py-1.5 rounded-full text-[11px] font-black">{images.length}/3 REFERÊNCIAS</span>
-              </label>
-              <div className="grid grid-cols-3 gap-5">
-                {images.map(img => (
-                  <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden group shadow-lg border border-border">
-                    <img src={img.preview} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
-                    <button onClick={() => removeImage(img.id)} className="absolute top-3 right-3 bg-red-600 text-white p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity shadow-xl">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-                {images.length < 3 && (
-                  <label className="aspect-square border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-secondary-theme/5 hover:border-secondary-theme transition-all group">
-                    <Icons.Camera className="w-8 h-8 text-text-secondary group-hover:text-secondary-theme group-hover:scale-110 transition-all" />
-                    <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageUpload} />
-                  </label>
-                )}
-              </div>
-            </section>
 
             <button
               onClick={handleGenerate}
@@ -433,19 +629,49 @@ const App: React.FC = () => {
                     </div>
                   </motion.div>
                 )}
+
+                {linha === LinhaDeEsforco.DEFINIR_POR_IA && result.selectedLinha && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col md:flex-row items-start gap-4 bg-primary-theme/5 border border-primary-theme/20 px-8 py-6 rounded-3xl shadow-sm"
+                  >
+                    <div className="flex items-center gap-3 shrink-0 mt-1">
+                      <div className="bg-primary-theme text-white p-2.5 rounded-xl shadow-lg ring-4 ring-primary-theme/10">
+                        <Activity className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Seleção Automática IA</span>
+                        <span className="text-xs font-black text-primary-theme uppercase tracking-wider">Cérebro Doutrinário</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black text-text-secondary uppercase px-2 py-0.5 border border-border rounded text-[8px]">Linha</span>
+                        <span className="text-sm font-black text-text-primary uppercase tracking-wide">{result.selectedLinha}</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-[10px] font-black text-text-secondary uppercase px-2 py-0.5 border border-border rounded text-[8px] mt-0.5">Ideia</span>
+                        <span className="text-xs font-bold text-text-primary leading-relaxed">{result.selectedIdeia}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 
-                <DeliverableCard 
-                  title="Social Media Institutional" 
-                  titleGenerated={result.instagramTitle}
-                  titleOptions={result.instagramTitleOptions}
-                  titleJustification={result.instagramTitleJustification}
-                  icon={<Icons.Camera className="w-5 h-5" />} 
-                  badge="Instagram/FB" 
-                  content={result.instagram} 
-                  imageUrl={result.imageUrl} 
-                  visualSuggestion={result.visualIdentitySuggestion}
-                  generationError={result.imageGenerationError}
-                />
+                {result.instagram && formats.includes(DeliveryFormat.INSTAGRAM) && (
+                  <DeliverableCard 
+                    title="Social Media Institutional" 
+                    titleGenerated={result.instagramTitle}
+                    titleOptions={result.instagramTitleOptions}
+                    titleJustification={result.instagramTitleJustification}
+                    icon={<Icons.Camera className="w-5 h-5" />} 
+                    badge="Instagram/FB" 
+                    content={result.instagram} 
+                    imageUrl={result.imageUrl} 
+                    visualSuggestion={result.visualIdentitySuggestion}
+                    generationError={result.imageGenerationError}
+                  />
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <motion.div 
@@ -455,7 +681,7 @@ const App: React.FC = () => {
                     <h4 className="text-xs font-black text-red-900 dark:text-red-400 uppercase tracking-widest mb-6 flex items-center gap-5">
                       <span className="w-10 h-[4px] bg-red-700 rounded-full"></span> ANÁLISE DE RISCO REPUTACIONAL
                     </h4>
-                    <p className="text-base text-text-primary leading-relaxed font-bold italic opacity-90">{result.riskAnalysis}</p>
+                    <p className="text-base text-text-primary leading-relaxed font-bold italic opacity-90 text-justify">{result.riskAnalysis}</p>
                   </motion.div>
                   <motion.div 
                     whileHover={{ y: -5 }}
@@ -464,29 +690,33 @@ const App: React.FC = () => {
                     <h4 className="text-xs font-black text-info-accent uppercase tracking-widest mb-6 flex items-center gap-5">
                       <span className="w-10 h-[4px] bg-info-accent rounded-full"></span> INDICADORES DE IMPACTO (KPI)
                     </h4>
-                    <p className="text-base text-text-primary leading-relaxed font-bold italic opacity-90">{result.impactMetrics}</p>
+                    <p className="text-base text-text-primary leading-relaxed font-bold italic opacity-90 text-justify">{result.impactMetrics}</p>
                   </motion.div>
                 </div>
 
-                <DeliverableCard 
-                  title="WhatsApp Corporativo" 
-                  titleGenerated={result.whatsappTitle}
-                  titleOptions={result.whatsappTitleOptions}
-                  titleJustification={result.whatsappTitleJustification}
-                  icon={<Icons.Send className="w-5 h-5" />} 
-                  badge="Difusão Direta" 
-                  content={result.whatsapp} 
-                />
+                {result.whatsapp && formats.includes(DeliveryFormat.WHATSAPP) && (
+                  <DeliverableCard 
+                    title="WhatsApp Corporativo" 
+                    titleGenerated={result.whatsappTitle}
+                    titleOptions={result.whatsappTitleOptions}
+                    titleJustification={result.whatsappTitleJustification}
+                    icon={<Icons.Send className="w-5 h-5" />} 
+                    badge="Difusão Direta" 
+                    content={result.whatsapp} 
+                  />
+                )}
                 
-                <DeliverableCard 
-                  title="Artigo Técnico-Doutrinário" 
-                  titleGenerated={result.articleTitle}
-                  titleOptions={result.articleTitleOptions}
-                  titleJustification={result.articleTitleJustification}
-                  icon={<Icons.Shield className="w-5 h-5" />} 
-                  badge="Pensamento Militar" 
-                  content={result.article} 
-                />
+                {result.article && formats.includes(DeliveryFormat.ARTICLE) && (
+                  <DeliverableCard 
+                    title="Artigo Técnico-Doutrinário" 
+                    titleGenerated={result.articleTitle}
+                    titleOptions={result.articleTitleOptions}
+                    titleJustification={result.articleTitleJustification}
+                    icon={<Icons.Shield className="w-5 h-5" />} 
+                    badge="Pensamento Militar" 
+                    content={result.article} 
+                  />
+                )}
 
                 <section className="bg-surface p-12 rounded-3xl shadow-2xl border border-border relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-48 h-48 bg-secondary-theme/5 -mr-24 -mt-24 rounded-full"></div>

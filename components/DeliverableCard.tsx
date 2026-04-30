@@ -195,7 +195,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
               </p>
             )}
 
-            <p className="text-xs text-text-primary font-bold italic leading-relaxed">"{visualSuggestion}"</p>
+            <p className="text-xs text-text-primary font-bold italic leading-relaxed text-justify">"{visualSuggestion}"</p>
             
             <div className="pt-2 space-y-2">
               <p className="text-[10px] text-text-secondary font-medium uppercase opacity-60 italic leading-tight">
@@ -255,7 +255,7 @@ export const DeliverableCard: React.FC<DeliverableCardProps> = ({
             )}
           </div>
         )}
-        <div className="prose prose-sm max-w-none text-text-primary leading-relaxed font-normal markdown-body">
+        <div className="prose prose-sm max-w-none text-text-primary leading-relaxed font-normal markdown-body text-justify">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       </div>

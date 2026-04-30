@@ -37,7 +37,7 @@ Para garantir a precisão doutrinária e o alinhamento estratégico, o sistema u
 ### 🎯 Contexto Situacional (Missão / Evento)
 Descrição livre da operação ou evento. É a base factual para que a IA processe os dados reais da missão.
 
-### 📄 Inteligência Técnica (PDF)
+### 📄 Referência Técnica (PDF)
 Nesta seção, o que deve ser inserido é o documento base (contexto) que servirá de fonte primária para a inteligência artificial. De acordo com a estrutura do sistema, esse campo é destinado ao upload de arquivos em PDF que contenham:
 
 - **Diretrizes Estratégicas:** Documentos formais e ordens de operações.
