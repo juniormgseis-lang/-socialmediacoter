@@ -2,8 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_FORCA_MAP, LinhaDeEsforco } from "../types";
 
-const TEXT_MODEL_FLASH = 'gemini-1.5-flash'; 
-const IMAGE_MODEL_GEMINI = 'gemini-1.5-flash';
+const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
+const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
 // Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY (injetado pelo sistema)
 const GEMINI_KEY = (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : '') || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
@@ -18,7 +18,7 @@ const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
  * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
  */
 async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-1.5-flash-8b'];
+  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-flash-latest'];
   
   let lastError: any = null;
 
