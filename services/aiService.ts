@@ -5,11 +5,11 @@ import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_F
 const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
-// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY
-const GEMINI_KEY = process.env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '') || '';
+// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY (injetado pelo sistema)
+const GEMINI_KEY = (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : '') || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
 
 if (!GEMINI_KEY) {
-  console.warn("Chave do Gemini não detectada via process.env. O sistema pode falhar.");
+  console.warn("Chave do Gemini não detectada. O sistema pode falhar.");
 }
 
 const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
@@ -102,7 +102,7 @@ export async function generateOperationalImage(params: GenerationParams): Promis
       ESTILO: Prontidão e profissionalismo (Persona TC Luiz Alves).
     `;
 
-    if (!GEMINI_KEY) throw new Error("VITE_GEMINI_API_KEY não configurada.");
+    if (!GEMINI_KEY) throw new Error("A chave do Gemini não foi detectada. Verifique as configurações do sistema.");
     
     const response = await genAI.models.generateContent({
       model: IMAGE_MODEL_GEMINI,
@@ -215,7 +215,7 @@ export async function generateOperationalContent(params: GenerationParams): Prom
 
     const prompt = `Gere conteúdo estratégico para o tópico: "${params.topic}". Contexto: ${customDoctrineContext}`;
 
-    if (!GEMINI_KEY) throw new Error("A chave GEMINI_API_KEY não foi encontrada.");
+    if (!GEMINI_KEY) throw new Error("A chave do Gemini não foi detectada. Verifique as configurações do sistema.");
     
     const isFlash = params.provider === AIProvider.GEMINI_FLASH;
 
