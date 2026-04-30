@@ -29,6 +29,7 @@ const App: React.FC = () => {
   const [aiProvider, setAiProvider] = useState<AIProvider>(AIProvider.GEMINI_FLASH);
   const [ideiaForca, setIdeiaForca] = useState<string>('');
   const [customSource, setCustomSource] = useState<string>('');
+  const [referenceUrl, setReferenceUrl] = useState<string>('');
   const [pdfContent, setPdfContent] = useState<string>('');
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [images, setImages] = useState<ReferenceImage[]>([]);
@@ -161,6 +162,7 @@ const App: React.FC = () => {
         ideiaForca, 
         images, 
         customSource: (pdfContent + "\n\n" + customSource).trim() || undefined,
+        referenceUrl: referenceUrl.trim() || undefined,
         provider: aiProvider,
         formats
       };
@@ -378,7 +380,7 @@ const App: React.FC = () => {
               <div className="relative space-y-6">
                 <label className="block text-[12px] font-black text-info-accent uppercase mb-4 tracking-[0.2em] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <Icons.FileText className="w-5 h-5" /> REFERÊNCIA TÉCNICA (PDF OU TEXTO)
+                    <Icons.FileText className="w-5 h-5" /> REFERÊNCIA TÉCNICA (PDF, URL OU TEXTO)
                   </div>
                   <button 
                     onClick={() => setShowFiqueSabendo(true)}
@@ -429,12 +431,25 @@ const App: React.FC = () => {
                   )}
 
                   {!attachedFileName && (
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                        <div className="w-full border-t border-border"></div>
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <Icons.Link className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-info-accent/50" />
+                        <input
+                          type="url"
+                          value={referenceUrl}
+                          onChange={(e) => setReferenceUrl(e.target.value)}
+                          placeholder="Link de Referência (URL de site oficial, notícia, etc.)"
+                          className="w-full pl-12 pr-4 py-4 bg-background/50 border-2 border-border rounded-2xl focus:border-info-accent focus:ring-8 focus:ring-info-accent/5 outline-none text-sm font-medium text-text-primary transition-all placeholder:text-text-secondary placeholder:opacity-60 shadow-inner"
+                        />
                       </div>
-                      <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest text-text-secondary bg-surface px-4">
-                        OU COLE O TEXTO ABAIXO
+
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                          <div className="w-full border-t border-border"></div>
+                        </div>
+                        <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest text-text-secondary bg-surface px-4">
+                          OU COLE O TEXTO ABAIXO
+                        </div>
                       </div>
                     </div>
                   )}

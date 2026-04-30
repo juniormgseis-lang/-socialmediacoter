@@ -87,10 +87,25 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
 
                 {/* Seção de Criação Visual */}
                 <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                  
+                  <div className="space-y-8">
+                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">02. Referência Técnica</h4>
+                    
+                    <section>
+                      <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        Utilize este campo para fornecer o <span className="font-bold text-blue-600 italic">embasamento factual</span>. Você pode combinar três formas: anexe um <strong className="text-blue-700">PDF</strong>, forneça um <strong className="text-blue-700">Link (URL)</strong> ou cole um <strong className="text-blue-700">Texto</strong> de modelo. A IA usará esses dados como fonte de verdade primária.
+                      </p>
+                    </section>
+                  </div>
+                </div>
+
+                {/* Seção de Criação Visual */}
+                <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
                   
                   <div className="space-y-8">
-                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">02. Centro de Criação Visual</h4>
+                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">03. Centro de Criação Visual</h4>
                     
                     <section>
                       <div className="flex items-center gap-3 mb-4">

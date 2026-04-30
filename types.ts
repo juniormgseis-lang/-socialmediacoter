@@ -202,6 +202,7 @@ export interface GenerationParams {
   ideiaForca: string;
   images: ReferenceImage[];
   customSource?: string;
+  referenceUrl?: string;
   provider: AIProvider;
   formats: DeliveryFormat[];
 }

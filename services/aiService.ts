@@ -136,10 +136,15 @@ export async function generateOperationalContent(params: GenerationParams): Prom
          Você deve declarar qual foi sua escolha nas propriedades "selectedLinha" e "selectedIdeia" do JSON de retorno. Toda a redação deve ser baseada nessa escolha automática.`
       : "";
 
-    const customDoctrineContext = params.customSource 
-      ? `FONTE TÉCNICA PRIMÁRIA (O PDF ANEXADO): \n"""\n${params.customSource}\n"""\n
-         DIRETRIZ: O PDF é sua base de verdade absoluta. O Grounding deve ser usado para complementar, mas o PDF tem precedência.` 
-      : "Utilize busca na internet para fundamentar o conteúdo em diretrizes oficiais militares brasileiras.";
+    const urlContext = params.referenceUrl 
+      ? `URL DE REFERÊNCIA TÉCNICA: ${params.referenceUrl}\nUtilize a busca integrada para acessar e fundamentar o conteúdo com base nesta URL.` 
+      : "";
+
+    const customDoctrineContext = `
+      ${params.customSource ? `FONTE TÉCNICA (TEXTO/PDF): \n"""\n${params.customSource}\n"""\n` : ""}
+      ${urlContext}
+      DIRETRIZ: As fontes técnicas fornecidas (PDF, Texto ou URL) são sua base de verdade absoluta. O Grounding (Busca Google) deve ser usado para complementar ou acessar a URL fornecida.
+    `;
 
     const systemInstruction = `
       IDENTIDADE: Você é o Tenente-Coronel Luiz Alves, Chefe da Comunicação Estratégica Operacional do COTER.
@@ -147,6 +152,8 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       REQUISITOS DE LINGUAGEM: Norma culta da língua portuguesa, tom técnico e autoritário.
 
       ${doctrinalContext}
+
+      GROUNDING: Se uma URL foi fornecida, PRIORIZE as informações contidas nela via busca. Caso contrário, utilize busca na internet para fundamentar o conteúdo em diretrizes oficiais militares brasileiras (Exército Brasileiro, Ministério da Defesa, etc.).
 
       FORMATO OBRIGATÓRIO: Retorne APENAS um objeto JSON válido.
       
@@ -219,7 +226,7 @@ export async function generateOperationalContent(params: GenerationParams): Prom
       ] 
     };
 
-    const response = await callGeminiWithFallback(contents, systemInstruction, !isFlash);
+    const response = await callGeminiWithFallback(contents, systemInstruction, true);
 
     const rawText = response.text || '{}';
     let jsonContent = rawText;

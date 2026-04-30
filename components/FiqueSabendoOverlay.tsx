@@ -65,10 +65,10 @@ export const FiqueSabendoOverlay: React.FC<FiqueSabendoOverlayProps> = ({ isOpen
                     <div className="space-y-4">
                       <div className="flex gap-4 items-start">
                         <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
-                          <span className="text-emerald-700 font-black text-xs">01</span>
+                           <span className="text-emerald-700 font-black text-xs">01</span>
                         </div>
                         <p className="text-sm text-slate-600 font-bold leading-snug">
-                          Agora você pode <strong className="text-emerald-600">combinar as duas formas</strong>: cole o texto de um modelo pronto para a IA seguir o estilo e, ao mesmo tempo, anexe um PDF com as informações novas e fatos da missão.
+                          Agora você pode <strong className="text-emerald-600">combinar três formas</strong>: anexe um PDF doutrinário, cole um texto de modelo e forneça um <strong className="text-emerald-600">Link de Referência (URL)</strong>. A IA acessará a URL para buscar informações atualizadas ou seguir um contexto externo.
                         </p>
                       </div>
 
