@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_FORCA_MAP, LinhaDeEsforco } from "../types";
 
-const TEXT_MODEL_FLASH = 'gemini-flash-latest'; 
+const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
 // Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY (injetado pelo sistema)
@@ -27,10 +27,9 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
       console.log(`Tentando requisição com o modelo: ${modelToTry}...`);
       const response = await genAI.models.generateContent({
         model: modelToTry,
-        contents,
+        contents: [contents], 
         config: {
           systemInstruction,
-          tools: includeTools ? [{ googleSearch: {} }] : [],
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -75,7 +74,6 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
 
       if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
         console.warn(`Modelo ${modelToTry} atingiu cota. Tentando modelo alternativo...`);
-        // Delay menor para fallback, pois já estamos trocando de modelo
         await new Promise(resolve => setTimeout(resolve, 500));
         continue; 
       }
@@ -86,7 +84,6 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
         continue;
       }
       
-      // Se for um erro crítico de segurança ou formato (400), não adianta tentar outro modelo igual
       if (errorStatus === 400 || errorMsg.includes('INVALID_ARGUMENT')) {
         throw error;
       }
@@ -121,15 +118,25 @@ export async function generateOperationalImage(params: GenerationParams): Promis
 
     if (!GEMINI_KEY) throw new Error("A chave do Gemini não foi detectada. Verifique as configurações do sistema.");
     
+    console.log(`[COTER-AI] Iniciando geração de imagem com modelo: ${IMAGE_MODEL_GEMINI}`);
+    
+    // Pequeno delay para evitar picos de cota
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const response = await genAI.models.generateContent({
       model: IMAGE_MODEL_GEMINI,
       contents: { parts: [{ text: prompt }] },
-      config: { imageConfig: { aspectRatio: "1:1" } }
+      config: {
+        // @ts-ignore - ImageConfig pode não estar tipado em todas as versões do SDK
+        imageConfig: { aspectRatio: "1:1" }
+      }
     });
 
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
+    if (response && response.candidates && response.candidates[0].content && response.candidates[0].content.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          return `data:image/png;base64,${part.inlineData.data}`;
+        }
       }
     }
     return undefined;
