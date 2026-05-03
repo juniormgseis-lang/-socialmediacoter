@@ -5,9 +5,9 @@ import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_F
 const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
-// Use o padrão exato da skill: process.env.GEMINI_API_KEY
-// O Vite/AI Studio cuidará da substituição durante o build
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+// Use o padrão compatível com AI Studio e builds externos (Vite/Cloudflare)
+const GEMINI_KEY = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
+const ai = new GoogleGenAI({ apiKey: GEMINI_KEY });
 
 export async function generateOperationalImage(params: GenerationParams): Promise<string | undefined> {
   try {
