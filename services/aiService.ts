@@ -2,8 +2,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_FORCA_MAP, LinhaDeEsforco } from "../types";
 
-const TEXT_MODEL_FLASH = 'gemini-1.5-flash'; 
-const IMAGE_MODEL_GEMINI = 'gemini-1.5-flash';
+const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
+const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
 // Use o padrão compatível com AI Studio e builds externos (Vite/Cloudflare)
 const GEMINI_KEY = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
