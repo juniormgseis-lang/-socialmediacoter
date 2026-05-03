@@ -5,80 +5,9 @@ import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_F
 const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
-// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY
-const GEMINI_KEY = process.env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '') || '';
-
-if (!GEMINI_KEY) {
-  console.warn("Chave do Gemini não detectada via process.env. O sistema pode falhar.");
-}
-
-const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
-
-/**
- * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
- */
-async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-flash-latest'];
-  
-  let lastError: any = null;
-
-  for (const modelToTry of modelsToTry) {
-    try {
-      const response = await genAI.models.generateContent({
-        model: modelToTry,
-        contents,
-        config: {
-          systemInstruction,
-          tools: includeTools ? [{ googleSearch: {} }] : [],
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              instagram: { type: Type.STRING },
-              instagramTitle: { type: Type.STRING },
-              instagramTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-              instagramTitleJustification: { type: Type.STRING },
-              whatsapp: { type: Type.STRING },
-              whatsappTitle: { type: Type.STRING },
-              whatsappTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-              whatsappTitleJustification: { type: Type.STRING },
-              article: { type: Type.STRING },
-              articleTitle: { type: Type.STRING },
-              articleTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-              articleTitleJustification: { type: Type.STRING },
-              riskAnalysis: { type: Type.STRING },
-              impactMetrics: { type: Type.STRING },
-              sources: { type: Type.ARRAY, items: { type: Type.STRING } },
-              conflictWarnings: { type: Type.STRING },
-              visualIdentitySuggestion: { type: Type.STRING },
-              selectedLinha: { type: Type.STRING },
-              selectedIdeia: { type: Type.STRING }
-            },
-            required: [
-              "instagram", "instagramTitle", "instagramTitleOptions", "instagramTitleJustification",
-              "whatsapp", "whatsappTitle", "whatsappTitleOptions", "whatsappTitleJustification",
-              "article", "articleTitle", "articleTitleOptions", "articleTitleJustification",
-              "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion",
-              "selectedLinha", "selectedIdeia"
-            ]
-          }
-        }
-      });
-      return response;
-    } catch (error: any) {
-      lastError = error;
-      const errorStr = JSON.stringify(error);
-      
-      if (errorStr.includes('429') || errorStr.includes('503') || errorStr.includes('RESOURCE_EXHAUSTED')) {
-        console.warn(`Modelo ${modelToTry} falhou. Tentando fallback...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        continue; 
-      }
-      throw error;
-    }
-  }
-  throw lastError;
-}
+// Use o padrão exato da skill: process.env.GEMINI_API_KEY
+// O Vite/AI Studio cuidará da substituição durante o build
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 export async function generateOperationalImage(params: GenerationParams): Promise<string | undefined> {
   try {
@@ -102,15 +31,17 @@ export async function generateOperationalImage(params: GenerationParams): Promis
       ESTILO: Prontidão e profissionalismo (Persona TC Luiz Alves).
     `;
 
-    if (!GEMINI_KEY) throw new Error("VITE_GEMINI_API_KEY não configurada.");
-    
-    const response = await genAI.models.generateContent({
+    const response = await ai.models.generateContent({
       model: IMAGE_MODEL_GEMINI,
-      contents: { parts: [{ text: prompt }] },
-      config: { imageConfig: { aspectRatio: "1:1" } }
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        imageConfig: {
+          aspectRatio: "1:1"
+        }
+      }
     });
 
-    for (const part of response.candidates[0].content.parts) {
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
       if (part.inlineData) {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
@@ -215,29 +146,54 @@ export async function generateOperationalContent(params: GenerationParams): Prom
 
     const prompt = `Gere conteúdo estratégico para o tópico: "${params.topic}". Contexto: ${customDoctrineContext}`;
 
-    if (!GEMINI_KEY) throw new Error("A chave GEMINI_API_KEY não foi encontrada.");
-    
-    const isFlash = params.provider === AIProvider.GEMINI_FLASH;
-
-    const contents = { 
-      parts: [
-        ...params.images.map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } })), 
-        { text: prompt }
-      ] 
-    };
-
-    const response = await callGeminiWithFallback(contents, systemInstruction, true);
+    const response = await ai.models.generateContent({
+      model: TEXT_MODEL_FLASH,
+      contents: { 
+        parts: [
+          ...params.images.map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } })), 
+          { text: prompt }
+        ] 
+      },
+      config: {
+        systemInstruction,
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            instagram: { type: Type.STRING },
+            instagramTitle: { type: Type.STRING },
+            instagramTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            instagramTitleJustification: { type: Type.STRING },
+            whatsapp: { type: Type.STRING },
+            whatsappTitle: { type: Type.STRING },
+            whatsappTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            whatsappTitleJustification: { type: Type.STRING },
+            article: { type: Type.STRING },
+            articleTitle: { type: Type.STRING },
+            articleTitleOptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            articleTitleJustification: { type: Type.STRING },
+            riskAnalysis: { type: Type.STRING },
+            impactMetrics: { type: Type.STRING },
+            sources: { type: Type.ARRAY, items: { type: Type.STRING } },
+            conflictWarnings: { type: Type.STRING },
+            visualIdentitySuggestion: { type: Type.STRING },
+            selectedLinha: { type: Type.STRING },
+            selectedIdeia: { type: Type.STRING }
+          },
+          required: [
+            "instagram", "instagramTitle", "instagramTitleOptions", "instagramTitleJustification",
+            "whatsapp", "whatsappTitle", "whatsappTitleOptions", "whatsappTitleJustification",
+            "article", "articleTitle", "articleTitleOptions", "articleTitleJustification",
+            "riskAnalysis", "impactMetrics", "sources", "conflictWarnings", "visualIdentitySuggestion",
+            "selectedLinha", "selectedIdeia"
+          ]
+        }
+      }
+    });
 
     const rawText = response.text || '{}';
-    let jsonContent = rawText;
-    
-    // Tenta extrair JSON de blocos de código se existirem
-    const jsonMatch = rawText.match(/```json\n([\s\S]*?)\n```/) || rawText.match(/```([\s\S]*?)```/);
-    if (jsonMatch && jsonMatch[1]) {
-      jsonContent = jsonMatch[1];
-    }
-    
-    const content = JSON.parse(jsonContent) as SocialMediaContent;
+    const content = JSON.parse(rawText) as SocialMediaContent;
     const groundingLinks = response.candidates?.[0]?.groundingMetadata?.groundingChunks
       ?.filter((chunk: any) => chunk.web)
       ?.map((chunk: any) => ({ title: chunk.web?.title || 'Fonte', uri: chunk.web?.uri || '' })) || [];
@@ -245,16 +201,13 @@ export async function generateOperationalContent(params: GenerationParams): Prom
     return { ...content, sourceLinks: groundingLinks };
   } catch (error: any) {
     console.error("Erro na geração de conteúdo:", error);
-    const errorStr = typeof error === 'string' ? error : JSON.stringify(error);
+    const message = error?.message || "Erro desconhecido";
     
-    if (errorStr.includes('429') || errorStr.includes('RESOURCE_EXHAUSTED') || errorStr.includes('quota')) {
+    if (message.includes('429') || message.includes('quota')) {
       throw new Error("COTA EXCEDIDA: O motor atingiu o limite de envios do plano gratuito.");
     }
 
-    if (errorStr.includes('503')) {
-      throw new Error("SISTEMA SOBRECARREGADO: O serviço do Google está com alta demanda.");
-    }
-    
-    throw new Error("Falha na comunicação com a IA: " + (error?.message || "Erro desconhecido"));
+    throw new Error("Falha na comunicação com a IA: " + message);
   }
 }
+
