@@ -10,20 +10,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    try {
-      const saved = localStorage.getItem('coter-theme');
-      return (saved as Theme) || Theme.LIGHT;
-    } catch {
-      return Theme.LIGHT;
-    }
+    const saved = localStorage.getItem('coter-theme');
+    return (saved as Theme) || Theme.LIGHT;
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem('coter-theme', theme);
-    } catch (e) {
-      console.warn('Falha ao salvar tema no localStorage:', e);
-    }
+    localStorage.setItem('coter-theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
     
     // Also manage class for tailwind dark mode if needed, 

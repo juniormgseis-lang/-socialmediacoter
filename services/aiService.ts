@@ -5,11 +5,11 @@ import { GenerationParams, SocialMediaContent, VisualStyle, AIProvider, IDEIAS_F
 const TEXT_MODEL_FLASH = 'gemini-3-flash-preview'; 
 const IMAGE_MODEL_GEMINI = 'gemini-2.5-flash-image';
 
-// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY (injetado pelo sistema)
-const GEMINI_KEY = (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : '') || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+// Tenta obter a chave preferencialmente de process.env.GEMINI_API_KEY
+const GEMINI_KEY = process.env.GEMINI_API_KEY || (typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : '') || '';
 
 if (!GEMINI_KEY) {
-  console.warn("Chave do Gemini não detectada. O sistema pode falhar.");
+  console.warn("Chave do Gemini não detectada via process.env. O sistema pode falhar.");
 }
 
 const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
@@ -18,18 +18,18 @@ const genAI = new GoogleGenAI({ apiKey: GEMINI_KEY });
  * Função auxiliar para gerar conteúdo com fallback e tratamento de erros
  */
 async function callGeminiWithFallback(contents: any, systemInstruction: string, includeTools: boolean): Promise<any> {
-  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-1.5-flash', 'gemini-3-flash-preview'];
+  const modelsToTry = [TEXT_MODEL_FLASH, 'gemini-flash-latest'];
   
   let lastError: any = null;
 
   for (const modelToTry of modelsToTry) {
     try {
-      console.log(`Tentando requisição com o modelo: ${modelToTry}...`);
       const response = await genAI.models.generateContent({
         model: modelToTry,
-        contents: [contents], 
+        contents,
         config: {
           systemInstruction,
+          tools: includeTools ? [{ googleSearch: {} }] : [],
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -67,28 +67,14 @@ async function callGeminiWithFallback(contents: any, systemInstruction: string, 
       return response;
     } catch (error: any) {
       lastError = error;
-      const errorMsg = error?.message || "";
-      const errorStatus = error?.status || error?.error?.code || 0;
+      const errorStr = JSON.stringify(error);
       
-      console.error(`Erro no modelo ${modelToTry}:`, { status: errorStatus, message: errorMsg });
-
-      if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
-        console.warn(`Modelo ${modelToTry} atingiu cota. Tentando modelo alternativo...`);
-        await new Promise(resolve => setTimeout(resolve, 500));
+      if (errorStr.includes('429') || errorStr.includes('503') || errorStr.includes('RESOURCE_EXHAUSTED')) {
+        console.warn(`Modelo ${modelToTry} falhou. Tentando fallback...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         continue; 
       }
-      
-      if (errorStatus === 503 || errorMsg.includes('503') || errorMsg.includes('unavailable')) {
-        console.warn(`Modelo ${modelToTry} indisponível (503). Tentando fallback...`);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        continue;
-      }
-      
-      if (errorStatus === 400 || errorMsg.includes('INVALID_ARGUMENT')) {
-        throw error;
-      }
-
-      continue;
+      throw error;
     }
   }
   throw lastError;
@@ -116,36 +102,22 @@ export async function generateOperationalImage(params: GenerationParams): Promis
       ESTILO: Prontidão e profissionalismo (Persona TC Luiz Alves).
     `;
 
-    if (!GEMINI_KEY) throw new Error("A chave do Gemini não foi detectada. Verifique as configurações do sistema.");
+    if (!GEMINI_KEY) throw new Error("VITE_GEMINI_API_KEY não configurada.");
     
-    console.log(`[COTER-AI] Iniciando geração de imagem com modelo: ${IMAGE_MODEL_GEMINI}`);
-    
-    // Pequeno delay para evitar picos de cota
-    await new Promise(resolve => setTimeout(resolve, 500));
-
     const response = await genAI.models.generateContent({
       model: IMAGE_MODEL_GEMINI,
       contents: { parts: [{ text: prompt }] },
-      config: {
-        // @ts-ignore - ImageConfig pode não estar tipado em todas as versões do SDK
-        imageConfig: { aspectRatio: "1:1" }
-      }
+      config: { imageConfig: { aspectRatio: "1:1" } }
     });
 
-    if (response && response.candidates && response.candidates[0].content && response.candidates[0].content.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:image/png;base64,${part.inlineData.data}`;
-        }
+    for (const part of response.candidates[0].content.parts) {
+      if (part.inlineData) {
+        return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
     return undefined;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro na geração de imagem:", error);
-    const errorMsg = error?.message || "";
-    if (error?.status === 429 || errorMsg.includes('429') || errorMsg.includes('quota')) {
-      throw new Error("COTA EXCEDIDA (Imagens): O limite de geração de imagens foi atingido. Tente novamente em alguns instantes.");
-    }
     throw error;
   }
 }
@@ -243,7 +215,7 @@ export async function generateOperationalContent(params: GenerationParams): Prom
 
     const prompt = `Gere conteúdo estratégico para o tópico: "${params.topic}". Contexto: ${customDoctrineContext}`;
 
-    if (!GEMINI_KEY) throw new Error("A chave do Gemini não foi detectada. Verifique as configurações do sistema.");
+    if (!GEMINI_KEY) throw new Error("A chave GEMINI_API_KEY não foi encontrada.");
     
     const isFlash = params.provider === AIProvider.GEMINI_FLASH;
 
@@ -273,17 +245,16 @@ export async function generateOperationalContent(params: GenerationParams): Prom
     return { ...content, sourceLinks: groundingLinks };
   } catch (error: any) {
     console.error("Erro na geração de conteúdo:", error);
-    const errorMsg = error?.message || "";
-    const errorStatus = error?.status || 0;
+    const errorStr = typeof error === 'string' ? error : JSON.stringify(error);
     
-    if (errorStatus === 429 || errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
-      throw new Error("LIMITE DE COTA: O motor do Gemini atingiu o limite de envios do plano gratuito. Por favor, aguarde de 1 a 2 minutos para que a cota seja redefinida.");
+    if (errorStr.includes('429') || errorStr.includes('RESOURCE_EXHAUSTED') || errorStr.includes('quota')) {
+      throw new Error("COTA EXCEDIDA: O motor atingiu o limite de envios do plano gratuito.");
     }
 
-    if (errorStatus === 503 || errorMsg.includes('503')) {
-      throw new Error("SISTEMA INSTÁVEL: O serviço do Google está temporariamente sobrecarregado (503).");
+    if (errorStr.includes('503')) {
+      throw new Error("SISTEMA SOBRECARREGADO: O serviço do Google está com alta demanda.");
     }
     
-    throw new Error("Falha na IA: " + (errorMsg || "Erro desconhecido de comunicação"));
+    throw new Error("Falha na comunicação com a IA: " + (error?.message || "Erro desconhecido"));
   }
 }

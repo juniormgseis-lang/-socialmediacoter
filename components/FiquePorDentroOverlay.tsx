@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Lightbulb, ClipboardList, Flag, Palette, Camera } from 'lucide-react';
+import { X, Lightbulb, ClipboardList, Flag, Palette, Camera, Target } from 'lucide-react';
 
 interface FiquePorDentroOverlayProps {
   isOpen: boolean;
@@ -37,15 +37,15 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
               
               <div className="flex items-center gap-6 mb-4">
                 <div className="p-4 bg-amber-500 rounded-3xl shadow-[0_0_30px_rgba(245,158,11,0.4)]">
-                  <Lightbulb className="w-8 h-8 text-white fill-white/20" />
+                  <Target className="w-8 h-8 text-white" />
                 </div>
                 <div>
                   <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-tight">
-                    Manual do Usuário
+                    Missão e Contexto
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="h-1 w-8 bg-amber-400 rounded-full"></span>
-                    <p className="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px]">Guia de Operação e Estilo</p>
+                    <p className="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px]">Contexto Situacional</p>
                   </div>
                 </div>
               </div>
@@ -53,12 +53,10 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
 
             <div className="p-10 overflow-y-auto custom-scrollbar bg-slate-50">
               <div className="space-y-8">
-                {/* Seção de Contexto */}
                 <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
                   
                   <div className="space-y-8">
-                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">01. Configuração do Contexto</h4>
                     <section>
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 bg-emerald-100 rounded-lg">
@@ -67,7 +65,7 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
                         <h4 className="text-lg font-black text-slate-800 uppercase italic">Missão Principal</h4>
                       </div>
                       <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        Define o <span className="font-bold text-emerald-600">"PORQUÊ"</span> estamos lá. É o pano de fundo institucional ou a operação de grande escala.
+                        Neste espaço, você deve definir o <span className="font-bold text-emerald-600">"PORQUÊ"</span> das ações. Descreva a operação de grande escala ou o objetivo institucional maior que ampara o evento.
                       </p>
                     </section>
 
@@ -79,55 +77,7 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
                         <h4 className="text-lg font-black text-slate-800 uppercase italic">Evento Operacional</h4>
                       </div>
                       <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        Define o <span className="font-bold text-blue-600 italic">"O QUÊ"</span> aconteceu. Seja específico para obter textos mais precisos da IA.
-                      </p>
-                    </section>
-                  </div>
-                </div>
-
-                {/* Seção de Criação Visual */}
-                <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
-                  
-                  <div className="space-y-8">
-                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">02. Referência Técnica</h4>
-                    
-                    <section>
-                      <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        Utilize este campo para fornecer o <span className="font-bold text-blue-600 italic">embasamento factual</span>. Você pode combinar três formas: anexe um <strong className="text-blue-700">PDF</strong>, forneça um <strong className="text-blue-700">Link (URL)</strong> ou cole um <strong className="text-blue-700">Texto</strong> de modelo. A IA usará esses dados como fonte de verdade primária.
-                      </p>
-                    </section>
-                  </div>
-                </div>
-
-                {/* Seção de Criação Visual */}
-                <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
-                  
-                  <div className="space-y-8">
-                    <h4 className="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">03. Centro de Criação Visual</h4>
-                    
-                    <section>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-amber-100 rounded-lg">
-                          <Camera className="w-5 h-5 text-amber-700" />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-800 uppercase italic">Referências de Imagem</h4>
-                      </div>
-                      <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        Forneça um <span className="font-bold text-amber-600 italic">gabarito visual</span> anexando até 3 fotos reais. Isso ensina à IA a iluminação, composição e texturas desejadas.
-                      </p>
-                    </section>
-
-                    <section>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-slate-100 rounded-lg">
-                          <Palette className="w-5 h-5 text-slate-700" />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-800 uppercase italic">Identidade Visual</h4>
-                      </div>
-                      <p className="text-sm text-slate-600 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        Configure o DNA visual (uniformes, camuflagens e ambiente). Combine o estilo selecionado com suas referências para fidelidade técnica máxima.
+                        Aqui entra o <span className="font-bold text-blue-600 italic">"O QUÊ"</span> aconteceu. Seja específico: datas, locais (se permitido), meios empregados e resultados alcançados.
                       </p>
                     </section>
                   </div>
@@ -135,11 +85,11 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
 
                 <div className="p-6 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
                   <div className="flex gap-4">
-                    <div className="text-2xl mt-1">⚙️</div>
+                    <div className="text-2xl mt-1">💡</div>
                     <div>
-                      <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-1">Motor de Inteligência</p>
+                      <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-1">Dica de Ouro</p>
                       <p className="text-xs text-slate-400 font-bold leading-relaxed italic">
-                        O motor processa o contexto (textos) e o estilo (visuais) simultaneamente. Mantenha os prompts de imagem ligados para utilizar o potencial máximo das referências enviadas.
+                        Quanto mais fatos você fornecer neste campo, menos a IA precisará "supor". Combine os dados deste campo com a Referência Técnica para resultados com precisão cirúrgica.
                       </p>
                     </div>
                   </div>
@@ -152,7 +102,7 @@ export const FiquePorDentroOverlay: React.FC<FiquePorDentroOverlayProps> = ({ is
                 onClick={onClose}
                 className="px-10 py-4 bg-emerald-600 text-white font-black uppercase text-xs tracking-[0.3em] rounded-full shadow-xl hover:shadow-emerald-200 hover:scale-105 transition-all"
               >
-                Operação Pronta
+                Entendido
               </button>
             </div>
           </motion.div>

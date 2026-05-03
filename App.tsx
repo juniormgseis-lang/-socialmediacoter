@@ -16,7 +16,7 @@ import { VisualStyle, ContentTone, ReferenceImage, SocialMediaContent, LinhaDeEs
 import { generateOperationalContent, generateOperationalImage } from './services/aiService';
 import * as pdfjsLib from 'pdfjs-dist';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trash2, ShieldAlert, Activity, Info, CheckCircle2, AlertTriangle, LayoutGrid, CheckSquare, Square } from 'lucide-react';
+import { Trash2, ShieldAlert, ShieldCheck, ClipboardList, Target, Info, CheckCircle2, AlertTriangle, LayoutGrid, CheckSquare, Square } from 'lucide-react';
 
 // Configuração do worker do PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://esm.sh/pdfjs-dist@4.10.38/build/pdf.worker.mjs`;
@@ -50,24 +50,16 @@ const App: React.FC = () => {
   const [showTomVoz, setShowTomVoz] = useState(false);
 
   useEffect(() => {
-    try {
-      const authStatus = sessionStorage.getItem('coter_auth');
-      if (authStatus === 'true') {
-        setIsAuthenticated(true);
-      }
-    } catch {
-      // Se cookies/sessionStorage estiverem bloqueados, o app ainda funciona mas sem persistência de login
+    const authStatus = sessionStorage.getItem('coter_auth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
     }
   }, []);
 
   const handleLogin = (password: string) => {
     if (password === '@coter') {
       setIsAuthenticated(true);
-      try {
-        sessionStorage.setItem('coter_auth', 'true');
-      } catch (e) {
-        console.warn('sessionStorage indisponível:', e);
-      }
+      sessionStorage.setItem('coter_auth', 'true');
       showStatus('success', 'Acesso autorizado. Missão iniciada.');
     }
   };
@@ -314,7 +306,6 @@ const App: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                   onClick={() => setShowManual(true)}
-                  aria-label="Abrir manual de doutrina"
                   className="mt-6 px-6 py-3 bg-white/5 hover:bg-white/15 rounded-2xl border border-white/10 hover:border-white/30 transition-all flex items-center gap-4 group backdrop-blur-[2px]"
                 >
                   <div className="p-2 bg-emerald-500 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:scale-110 transition-transform">
@@ -340,10 +331,9 @@ const App: React.FC = () => {
           <div className="lg:col-span-5 space-y-10">
             <section className="bg-surface p-10 rounded-3xl shadow-2xl border-l-8 border-l-secondary-theme border border-border transition-all hover:shadow-emerald-900/5">
               <label className="block text-[12px] font-black text-text-secondary uppercase mb-5 tracking-[0.2em] flex justify-between items-center">
-                <span className="flex items-center gap-2"><Activity className="w-4 h-4 text-secondary-theme" /> Missão / Evento Operacional</span>
+                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4 text-secondary-theme" /> Missão / Evento Operacional</span>
                 <button 
                   onClick={() => setShowFiquePorDentro(true)}
-                  aria-label="Informações sobre o tópico"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="Fique por Dentro!"
                 >
@@ -362,7 +352,6 @@ const App: React.FC = () => {
                   <span className="flex items-center gap-2"><Icons.MessageSquare className="w-3 h-3 text-secondary-theme" /> Tom de Voz Estratégico</span>
                   <button 
                     onClick={() => setShowTomVoz(true)}
-                    aria-label="Ajuda sobre Tom de Voz"
                     className="p-1 hover:bg-amber-400/10 rounded-full transition-all text-amber-500"
                     title="Ajuda sobre Tom de Voz"
                   >
@@ -395,7 +384,6 @@ const App: React.FC = () => {
                   </div>
                   <button 
                     onClick={() => setShowFiqueSabendo(true)}
-                    aria-label="Ajuda sobre referências técnicas"
                     className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                     title="Fique Sabendo!"
                   >
@@ -481,7 +469,6 @@ const App: React.FC = () => {
                 <span className="flex items-center gap-2"><Icons.Zap className="w-4 h-4 text-secondary-theme" /> LINHAS DE ESFORÇO</span>
                 <button 
                   onClick={() => setShowLinhasInfo(true)}
-                  aria-label="Informações sobre Linhas de Esforço"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="O que é?"
                 >
@@ -493,7 +480,7 @@ const App: React.FC = () => {
                   <label className="block text-[12px] font-black text-text-secondary uppercase mb-3 tracking-[0.2em] flex justify-center items-center">
                     {linha === LinhaDeEsforco.DEFINIR_POR_IA && (
                       <span className="text-secondary-theme animate-pulse flex items-center gap-1 text-[10px]">
-                        <Activity className="w-3 h-3" /> INTELIGÊNCIA ATIVA
+                        <Target className="w-3 h-3" /> INTELIGÊNCIA ATIVA
                       </span>
                     )}
                   </label>
@@ -534,7 +521,6 @@ const App: React.FC = () => {
                 <span className="flex items-center gap-2"><LayoutGrid className="w-4 h-4 text-secondary-theme" /> Formas de Entrega</span>
                 <button 
                   onClick={() => setShowFormasInfo(true)}
-                  aria-label="Ajuda sobre Formas de Entrega"
                   className="p-2 hover:bg-amber-400/10 rounded-full transition-all text-amber-400 animate-pulse"
                   title="Ajuda nas Formas de Entrega"
                 >
@@ -598,15 +584,15 @@ const App: React.FC = () => {
             <button
               onClick={handleGenerate}
               disabled={loading || processingPdf}
-              className={`w-full py-8 rounded-3xl font-black text-primary-contrast uppercase tracking-[0.4em] shadow-2xl flex items-center justify-center gap-5 transition-all transform hover:-translate-y-1 active:scale-95 ${loading || processingPdf ? 'bg-border text-text-secondary cursor-not-allowed' : 'bg-primary-theme hover:opacity-90 ring-8 ring-primary-theme/5'}`}
+              className={`w-full py-8 rounded-3xl font-black text-primary-contrast uppercase tracking-[0.4em] shadow-2xl flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 active:scale-95 ${loading || processingPdf ? 'bg-border text-text-secondary cursor-not-allowed' : 'bg-primary-theme hover:opacity-90 ring-8 ring-primary-theme/5'}`}
             >
               {loading ? (
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
                   SINTETIZANDO COMANDO...
                 </div>
               ) : (
-                <><Icons.Send className="w-6 h-6" /> EMITIR DIRETRIZ DIGITAL</>
+                <><ShieldCheck className="w-6 h-6" /> EMITIR DIRETRIZ DIGITAL</>
               )}
             </button>
           </div>
@@ -667,7 +653,7 @@ const App: React.FC = () => {
                   >
                     <div className="flex items-center gap-3 shrink-0 mt-1">
                       <div className="bg-primary-theme text-white p-2.5 rounded-xl shadow-lg ring-4 ring-primary-theme/10">
-                        <Activity className="w-5 h-5" />
+                        <Target className="w-5 h-5" />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Seleção Automática IA</span>
@@ -764,22 +750,22 @@ const App: React.FC = () => {
                               href={link.uri} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-xs bg-surface text-text-primary border-2 border-border px-6 py-4 rounded-2xl hover:border-secondary-theme hover:text-text-primary hover:shadow-2xl transition-all flex items-center gap-5 font-black group"
+                              className="text-xs bg-surface text-text-primary border-2 border-border px-6 py-4 rounded-2xl hover:border-secondary-theme hover:text-text-primary hover:shadow-2xl transition-all flex items-center gap-5 font-black group max-w-full overflow-hidden"
                             >
                               <div className="w-8 h-8 bg-background/50 rounded-xl flex items-center justify-center shrink-0 border border-border group-hover:bg-secondary-theme/10 transition-colors">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                               </div>
-                              <span className="truncate max-w-[300px]">{link.title}</span>
+                              <span className="break-all whitespace-normal max-w-[200px] sm:max-w-none">{link.title}</span>
                             </a>
                           ))}
                         </div>
                       </div>
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6">
                       {result.sources.map((src, i) => (
-                        <div key={i} className="text-[12px] text-text-secondary uppercase flex items-start gap-5 bg-background/30 p-6 rounded-2xl border border-border hover:bg-background transition-all hover:shadow-md">
+                        <div key={i} className="text-[12px] text-text-secondary uppercase flex items-start gap-5 bg-background/30 p-6 rounded-2xl border border-border hover:bg-background transition-all hover:shadow-md overflow-hidden">
                           <span className="w-3 h-3 bg-secondary-theme rounded-full shrink-0 mt-1.5 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span> 
-                          <span className="leading-tight font-black opacity-80">{src}</span>
+                          <span className="leading-tight font-black opacity-80 break-all whitespace-normal w-full">{src}</span>
                         </div>
                       ))}
                     </div>
@@ -796,9 +782,7 @@ const App: React.FC = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
-            try {
-              sessionStorage.removeItem('coter_auth');
-            } catch {}
+            sessionStorage.removeItem('coter_auth');
             setIsAuthenticated(false);
             showStatus('info', 'Sessão encerrada.');
           }}

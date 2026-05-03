@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Lightbulb, Binary, Smile, Target, Zap } from 'lucide-react';
+import { X, Lightbulb, Binary, Users, Target, Zap } from 'lucide-react';
 
 interface TomVozOverlayProps {
   isOpen: boolean;
@@ -74,11 +74,11 @@ export const TomVozOverlay: React.FC<TomVozOverlayProps> = ({ isOpen, onClose })
                     </ul>
                   </div>
 
-                  <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-pink-500 transition-colors">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-300 group-hover:bg-pink-500 transition-colors"></div>
+                  <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-indigo-500 transition-colors">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-300 group-hover:bg-indigo-500 transition-colors"></div>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-pink-100 rounded-lg">
-                        <Smile className="w-5 h-5 text-pink-700" />
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <Users className="w-5 h-5 text-indigo-700" />
                       </div>
                       <h4 className="text-lg font-black text-slate-800 uppercase italic">Emotivo</h4>
                     </div>
@@ -95,7 +95,7 @@ export const TomVozOverlay: React.FC<TomVozOverlayProps> = ({ isOpen, onClose })
                   <div className="flex gap-4">
                     <Zap className="w-5 h-5 text-amber-600 mt-1" />
                     <p className="text-xs text-amber-900 font-bold leading-relaxed">
-                      DICA: Para operações reais envolvendo a sociedade (como desastres naturais), o tom <span className="text-pink-600">Emotivo</span> costuma gerar 3x mais engajamento. Já para grandes exercícios militares, o tom <span className="text-indigo-600">Técnico</span> reforça nossa capacidade de dissuasão.
+                      DICA: Para operações reais envolvendo a sociedade (como desastres naturais), o tom <span className="text-indigo-600">Emotivo</span> costuma gerar 3x mais engajamento. Já para grandes exercícios militares, o tom <span className="text-indigo-600">Técnico</span> reforça nossa capacidade de dissuasão.
                     </p>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Lightbulb, Activity, Target, Zap } from 'lucide-react';
+import { X, Lightbulb, Shield, Target, Zap } from 'lucide-react';
 
 interface LinhasInfoOverlayProps {
   isOpen: boolean;
@@ -74,7 +74,7 @@ export const LinhasInfoOverlay: React.FC<LinhasInfoOverlayProps> = ({ isOpen, on
 
                       <div className="flex gap-4 items-start">
                         <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0 mt-1">
-                          <Activity className="w-4 h-4 text-indigo-700" />
+                          <Shield className="w-4 h-4 text-indigo-700" />
                         </div>
                         <p className="text-sm text-slate-600 font-bold leading-snug">
                           A <strong className="text-indigo-600">Ideia-Força</strong> vinculada serve como o "mantra" que a IA deve reforçar em cada frase gerada.
